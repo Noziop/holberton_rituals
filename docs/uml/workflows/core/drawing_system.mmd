@@ -1,0 +1,66 @@
+sequenceDiagram
+    participant S as System
+    participant D as DrawingEngine
+    participant DB as Database
+    participant Staff
+    participant N as Notifications
+
+    %% Phase 1: Initial Checks
+    rect rgb(200, 220, 255)
+        Note right of S: Daily Validation
+        S->>DB: checkWeekDay(Tue-Fri)
+        S->>DB: checkCohortSchedule(11:45)
+        S->>DB: checkPublicHoliday()
+        S->>DB: checkVacations()
+        S->>DB: checkSpecialEvents()
+    end
+
+    %% Phase 2: Student Eligibility
+    rect rgb(255, 200, 200)
+        Note right of S: SM Eligibility
+        S->>DB: getActiveStudents()
+        loop Each Student
+            S->>DB: checkLastSMRole(lastWeek)
+            S->>DB: checkAttendance()
+            S->>DB: checkProjectKnowledge()
+            S->>DB: checkAuthorizedAbsence()
+            S->>DB: checkExternalProject()
+        end
+    end
+
+    %% Phase 3: Weight Calculation
+    rect rgb(220, 200, 255)
+        Note right of D: Weight Processing
+        D->>D: resetWeights()
+        loop Each Eligible Student
+            D->>DB: getSMHistory()
+            D->>DB: getProjectExpertise()
+            D->>DB: getParticipationMetrics()
+            D->>D: calculateFinalWeight()
+        end
+    end
+
+    %% Phase 4: Selection
+    rect rgb(200, 255, 200)
+        Note right of D: SM Selection
+        D->>D: performWeightedDraw()
+        D->>Staff: validateSelection()
+        alt Staff Rejects
+            Staff->>D: requestNewDraw()
+        else Staff Approves
+            D->>S: confirmSelection()
+        end
+    end
+
+    %% Phase 5: Assignment & Notification
+    S->>DB: recordSMAssignment()
+    S->>N: notifySelectedSM()
+    S->>N: notifyCohort()
+
+    %% Phase 6: Preparation
+    rect rgb(220, 220, 255)
+        Note right of S: SM Prep
+        S->>N: sendSMGuidelines()
+        S->>N: sendProjectContext()
+        S->>N: sendAttendanceList()
+    end

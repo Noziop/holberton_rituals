@@ -1,0 +1,42 @@
+---
+title: SOD System
+---
+erDiagram
+    SOD {
+        uuid id
+        uuid presenter_id
+        datetime date
+        string topic
+        datetime submission_deadline
+        datetime actual_submission
+        string status
+        float feedback_score
+    }
+
+    SOD_FEEDBACK {
+        uuid id
+        uuid reviewer_id
+        int presentation_clarity
+        int topic_mastery
+        int time_management
+        string comments
+    }
+
+    SOD_REHEARSAL {
+        uuid sod_id
+        datetime scheduled_at
+        boolean completed
+        string feedback
+    }
+
+    SOD_RESOURCE {
+        uuid id
+        string file_path
+        int version
+        datetime uploaded_at
+    }
+
+    SOD ||--o{ SOD_FEEDBACK : receives
+    SOD ||--o{ SOD_REHEARSAL : requires
+    SOD ||--o{ SOD_RESOURCE : contains
+    USER ||--o{ SOD : presents

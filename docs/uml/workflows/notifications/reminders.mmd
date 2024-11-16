@@ -1,0 +1,76 @@
+sequenceDiagram
+    participant S as System
+    participant N as NotificationEngine
+    participant U as User
+    participant P as Preferences
+    participant M as Metrics
+
+    %% Phase 1: Reminder Scheduling
+    rect rgb(200, 220, 255)
+        Note right of S: Event Detection
+        S->>S: checkUpcomingEvents()
+        
+        alt SOD Reminder
+            S->>N: scheduleDMinusReminders()
+        else StandUp Alert
+            S->>N: scheduleDailyReminder()
+        else Volunteer Opportunity
+            S->>N: scheduleVolunteerAlert()
+        end
+    end
+
+    %% Phase 2: Preference Check
+    N->>P: getUserPreferences()
+    
+    rect rgb(220, 200, 255)
+        Note right of N: Channel Selection
+        alt Email Enabled
+            P-->>N: useEmail()
+        else Slack Enabled
+            P-->>N: useSlack()
+        else Both Enabled
+            P-->>N: useBothChannels()
+        end
+    end
+
+    %% Phase 3: Smart Timing
+    N->>N: checkQuietHours()
+    N->>N: checkUserTimezone()
+    N->>M: checkUserEngagement()
+
+    alt Low Engagement
+        N->>N: increaseFrequency()
+    else High Engagement
+        N->>N: optimizeFrequency()
+    end
+
+    %% Phase 4: Reminder Delivery
+    rect rgb(255, 220, 200)
+        Note right of N: Smart Delivery
+        N->>N: formatMessage()
+        N->>N: addPersonalization()
+        N->>N: includeContextData()
+    end
+
+    N-->>U: sendReminder()
+    
+    %% Phase 5: Follow-up
+    S->>M: trackDelivery()
+    M->>M: updateEngagementMetrics()
+
+    alt No Response
+        N->>N: scheduleFollowUp()
+    else User Interaction
+        U->>S: acknowledgeReminder()
+        S->>M: recordInteraction()
+    end
+
+    %% Phase 6: Optimization
+    M->>S: analyzeEffectiveness()
+    S->>N: adjustStrategy()
+    
+    alt Poor Response
+        S->>N: modifyApproach()
+    else Good Response
+        S->>N: reinforcePattern()
+    end

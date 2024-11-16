@@ -1,0 +1,72 @@
+sequenceDiagram
+    participant S as System
+    participant V as Volunteer
+    participant Staff
+    participant N as Notifications
+    participant M as Metrics
+
+    %% Phase 1: Opportunity Detection
+    rect rgb(200, 220, 255)
+        Note right of S: Slot Analysis
+        S->>S: checkUpcomingSlots()
+        S->>S: identifyPriorities()
+        S->>S: matchVolunteerPreferences()
+    end
+
+    %% Phase 2: Volunteer Selection
+    alt Priority Assignment
+        S->>S: findBestMatch()
+        S->>N: notifyPriorityOffer()
+        N-->>V: sendPriorityInvitation()
+    else Open Slot
+        S->>N: broadcastOpportunity()
+        N-->>V: sendOpenSlotAlert()
+    end
+
+    %% Phase 3: Assignment Process
+    alt Volunteer Accepts
+        V->>S: acceptAssignment()
+        rect rgb(220, 200, 255)
+            Note right of S: Confirmation
+            S->>M: updateVolunteerStats()
+            S->>N: sendConfirmation()
+            S->>Staff: notifyStaffAssignment()
+        end
+    else Volunteer Declines
+        V->>S: declineAssignment()
+        S->>S: updatePreferences()
+        S->>S: findAlternative()
+    end
+
+    %% Phase 4: Pre-Event Preparation
+    alt First Time for Ritual
+        S->>N: sendGuidelines()
+        S->>N: assignMentor()
+    end
+    
+    N-->>V: sendPreparationMaterials()
+    N-->>V: sendReminders()
+
+    %% Phase 5: Event Tracking
+    rect rgb(255, 220, 200)
+        Note right of S: Performance Recording
+        S->>M: trackAttendance()
+        S->>M: recordCompletion()
+        S->>M: calculateRewards()
+    end
+
+    %% Phase 6: Post-Event Processing
+    S->>M: updateVolunteerMetrics()
+    
+    alt Successful Completion
+        M->>S: awardPoints()
+        M->>S: checkStreakAchievements()
+        S->>N: sendCongratulations()
+    else Issues Reported
+        S->>Staff: notifyIssues()
+        Staff->>V: provideFeedback()
+    end
+
+    %% Phase 7: Future Assignments
+    S->>S: updateVolunteerScore()
+    S->>S: adjustPriorityStatus()

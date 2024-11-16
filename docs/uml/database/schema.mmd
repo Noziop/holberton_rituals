@@ -1,0 +1,78 @@
+---
+title: Global Database Schema
+---
+erDiagram
+    %% Core Systems
+    USERS ||--o{ STUDENTS : has
+    STUDENTS ||--o{ PARTICIPATIONS : tracks
+    COHORTS ||--o{ STUDENTS : contains
+
+    %% Ritual Systems
+    PARTICIPATIONS {
+        int id PK
+        int student_id FK
+        enum ritual_type
+        datetime date
+    }
+
+    DRAWINGS {
+        int id PK
+        int student_id FK
+        date drawing_date
+        date presentation_date
+    }
+
+    FEEDBACK {
+        int id PK
+        int student_id FK
+        enum ritual_type
+        text content
+    }
+
+    VOLUNTEER {
+        int id PK
+        int student_id FK
+        enum ritual_type
+        date slot_date
+    }
+
+    %% Achievement Systems
+    BADGES {
+        int id PK
+        string name
+        enum badge_type
+    }
+
+    POINTS {
+        int student_id FK
+        int total_points
+        int volunteer_points
+    }
+
+    CHALLENGES {
+        int id PK
+        string title
+        enum challenge_type
+    }
+
+    %% Time Management
+    SCHEDULES {
+        int id PK
+        int cohort_id FK
+        enum day_type
+        date event_date
+    }
+
+    %% Relations
+    PARTICIPATIONS ||--o{ DRAWINGS : includes
+    PARTICIPATIONS ||--o{ FEEDBACK : collects
+    PARTICIPATIONS ||--o{ VOLUNTEER : enables
+    STUDENTS ||--o{ BADGES : earns
+    STUDENTS ||--o{ POINTS : accumulates
+    STUDENTS ||--o{ CHALLENGES : completes
+    FEEDBACK ||--o{ METRICS : generates
+    VOLUNTEER ||--o{ METRICS : influences
+    CHALLENGES ||--o{ METRICS : affects
+    COHORTS ||--o{ SCHEDULES : defines
+    SCHEDULES ||--o{ DRAWINGS : organizes
+    SCHEDULES ||--o{ VOLUNTEER_SLOTS : plans

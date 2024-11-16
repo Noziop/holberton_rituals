@@ -1,0 +1,107 @@
+---
+title: Feedback System Tables 2.0
+---
+erDiagram
+    %% Existing Feedback Tables
+    standup_feedback {
+        int id PK
+        int student_id FK "NULL"
+        int cohort_id FK "NOT NULL"
+        date date "NULL"
+        boolean absent "DEFAULT 0"
+        boolean on_site "DEFAULT 0"
+        text achievements "NULL"
+        text today_goals "NULL"
+        boolean need_help "DEFAULT 0"
+        text problem_nature "NULL"
+        text other_remarks "NULL"
+        text content "NULL"
+        text scrum_master_names "NULL"
+        text bugs_report "NULL"
+        text cohort_difficulties "NULL"
+        text shared_tips "NULL"
+        text conclusion "NULL"
+        text other_reports "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% Enhanced SOD Feedback
+    sod_feedback {
+        int id PK
+        int student_id FK "NULL"
+        int evaluator_id FK "NULL"
+        date sod_date "NULL"
+        text content "NULL"
+        int clarity_score "1-5"
+        int technical_score "1-5"
+        int delivery_score "1-5"
+        int qa_handling "1-5"
+        text strengths "NULL"
+        text improvements "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    peer_feedback {
+        int id PK
+        int from_student_id FK
+        int to_student_id FK
+        int sod_id FK
+        text feedback
+        int helpfulness_score "1-5"
+        timestamp given_at
+    }
+
+    pld_submissions {
+        int id PK
+        int student_id FK "NULL"
+        date date "NULL"
+        text content "NULL"
+        int collaboration_score "1-5"
+        int completion_score "1-5"
+        text team_feedback "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    feedback_reports {
+        int id PK
+        int student_id FK "NOT NULL"
+        enum type "(SOD,Stand Up,PLD)"
+        text content "NOT NULL"
+        float overall_score "0-100"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% New Volunteer Feedback
+    volunteer_feedback {
+        int id PK
+        int student_id FK "NOT NULL"
+        enum ritual_type "(SOD,Stand Up,PLD)"
+        date ritual_date "NOT NULL"
+        int performance_score "1-5"
+        text feedback "NULL"
+        boolean completed "DEFAULT false"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    volunteer_ratings {
+        int id PK
+        int volunteer_id FK "NOT NULL"
+        int rater_id FK "NOT NULL"
+        int helpfulness_score "1-5"
+        text comments "NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% Relations
+    students ||--o{ standup_feedback : provides
+    students ||--o{ sod_feedback : presents
+    students ||--o{ sod_feedback : evaluates
+    students ||--o{ peer_feedback : gives
+    students ||--o{ peer_feedback : receives
+    students ||--o{ pld_submissions : submits
+    students ||--o{ volunteer_feedback : volunteers
+    students ||--o{ volunteer_ratings : rates
+    volunteer_feedback ||--o{ volunteer_ratings : receives
+    cohorts ||--o{ standup_feedback : collects
+    cohorts ||--o{ feedback_reports : generates

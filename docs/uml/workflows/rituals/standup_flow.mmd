@@ -1,0 +1,89 @@
+sequenceDiagram
+    participant S as System
+    participant D as DrawingEngine
+    participant DB as Database
+    participant Staff
+    participant N as Notifications
+
+    %% Phase 1: Daily Validation
+    rect rgb(200, 220, 255)
+        Note right of S: Validation Jour
+        S->>DB: checkWeekDay(Tue-Fri)
+        S->>DB: checkCohortTime(11:45)
+        S->>DB: checkPublicHoliday()
+        S->>DB: checkVacations()
+    end
+
+    %% Phase 2: Student Eligibility
+    rect rgb(255, 200, 200)
+        Note right of S: Eligibility Check
+        S->>DB: getActiveStudents()
+        loop Each Student
+            S->>DB: checkLastSMRole(lastWeek)
+            S->>DB: checkAuthorizedAbsence()
+            S->>DB: checkExternalProject()
+            rect rgb(220, 255, 220)
+                Note right of S: Expertise Check
+                S->>DB: checkProjectKnowledge()
+                S->>Staff: validateExpertise()
+            end
+        end
+    end
+
+    %% Phase 3: Weight Calculation
+    rect rgb(220, 200, 255)
+        Note right of D: Weight Processing
+        D->>D: resetWeights()
+        loop Each Eligible Student
+            D->>DB: getLastSMDate()
+            D->>DB: getProjectExpertise()
+            D->>DB: getParticipationQuality()
+            D->>D: calculateFinalWeight()
+        end
+    end
+
+    %% Phase 4: Selection Process
+    rect rgb(200, 255, 200)
+        Note right of D: SM Selection
+        D->>D: performWeightedDraw()
+        D->>Staff: validateSelection()
+        
+        alt Staff Override
+            Staff->>D: requestNewDraw()
+            D->>DB: recordOverrideReason()
+        else Staff Approves
+            Staff->>S: confirmSelection()
+        end
+    end
+
+    %% Phase 5: Assignment & Recording
+    S->>DB: recordSMAssignment()
+    S->>DB: updateStudentHistory()
+
+    %% Phase 6: Preparation & Support
+    rect rgb(220, 220, 255)
+        Note right of S: SM Setup
+        S->>N: notifySelectedSM()
+        S->>N: sendSMGuidelines()
+        S->>N: sendProjectContext()
+        S->>N: sendAttendanceList()
+        S->>N: notifyCohort()
+    end
+
+    %% Phase 7: StandUp Support
+    rect rgb(255, 220, 255)
+        Note right of S: Support Tools
+        S->>N: sendStandUpTemplate()
+        S->>N: shareExpertTips()
+        S->>N: provideProjectResources()
+    end
+
+    %% Phase 8: Post-StandUp
+    alt StandUp Completed
+        S->>DB: recordCompletion()
+        S->>DB: updateSMMetrics()
+    else Issues Reported
+        Staff->>S: reportIssue()
+        S->>DB: documentIssue()
+        S->>Staff: reviewForNextDay()
+    end

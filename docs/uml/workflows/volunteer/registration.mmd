@@ -1,0 +1,55 @@
+sequenceDiagram
+    participant St as Student
+    participant S as System
+    participant Staff
+    participant N as Notifications
+    participant M as Metrics
+
+    %% Phase 1: Volunteer Registration
+    St->>S: enableVolunteerStatus()
+    
+    rect rgb(200, 220, 255)
+        Note right of S: Preference Setup
+        St->>S: setRitualPreferences()
+        St->>S: setAvailableDays()
+        St->>S: setSpecialSkills()
+    end
+
+    %% Phase 2: Validation
+    S->>Staff: notifyNewVolunteer()
+    
+    alt Needs Review
+        Staff->>S: reviewVolunteerProfile()
+        Staff->>S: approveVolunteer()
+    else Direct Approval
+        S->>S: autoApproveVolunteer()
+    end
+
+    %% Phase 3: Onboarding
+    rect rgb(220, 200, 255)
+        Note right of S: Volunteer Setup
+        S->>N: sendWelcomePackage()
+        S->>M: initializeVolunteerMetrics()
+        S->>M: awardFirstVolunteerBadge()
+    end
+
+    %% Phase 4: Activation
+    S->>S: updateVolunteerPool()
+    S->>N: notifyVolunteerOpportunities()
+
+    %% Phase 5: Initial Rewards
+    rect rgb(255, 220, 200)
+        Note right of S: Welcome Rewards
+        M->>S: addInitialPoints()
+        M->>S: unlockVolunteerFeatures()
+        N->>St: sendCongratulations()
+    end
+
+    %% Phase 6: Community Integration
+    S->>N: announceNewVolunteer()
+    N-->>St: shareVolunteerTips()
+    
+    alt First Time Volunteer
+        S->>N: assignVolunteerMentor()
+        N-->>St: introduceMentor()
+    end

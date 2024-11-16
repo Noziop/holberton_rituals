@@ -1,0 +1,88 @@
+sequenceDiagram
+    participant S as System
+    participant D as DrawingEngine
+    participant DB as Database
+    participant Staff
+    participant N as Notifications
+
+    %% Phase 1: Initial Checks
+    rect rgb(200, 220, 255)
+        Note right of S: Validation Jour
+        S->>DB: checkDrawingDay()
+        S->>DB: checkPublicHoliday()
+        S->>DB: checkVacations()
+        
+        rect rgb(255, 220, 220)
+            Note right of S: Vérifications Staff
+            S->>DB: checkStaffExclusions(cohort)
+            S->>DB: checkStaffExclusions(student)
+            S->>DB: checkGroupProjects()
+        end
+    end
+
+    %% Phase 2: Student Eligibility
+    rect rgb(255, 200, 200)
+        Note right of S: Eligibility Check
+        S->>DB: getActiveStudents()
+        loop Each Student
+            S->>DB: checkLastPresentation(-15days)
+            S->>DB: checkUnavailability()
+            S->>DB: checkAuthorizedAbsence()
+            S->>DB: checkStudentStatus()
+        end
+    end
+
+    %% Phase 3: Weight Calculation
+    rect rgb(220, 200, 255)
+        Note right of D: Weight Processing
+        D->>D: resetWeights()
+        loop Each Eligible Student
+            D->>DB: getTimeSinceLastSOD()
+            D->>DB: getParticipationHistory()
+            D->>DB: getAttendanceRecord()
+            D->>D: calculateFinalWeight()
+        end
+    end
+
+    %% Phase 4: Drawing Process
+    rect rgb(200, 255, 200)
+        Note right of D: Selection
+        D->>D: performWeightedDraw()
+        D->>Staff: validateSelection()
+        
+        alt Staff Override
+            Staff->>D: requestNewDraw()
+            D->>DB: recordOverrideReason()
+        else Staff Approves
+            Staff->>S: confirmSelection()
+        end
+    end
+
+    %% Phase 5: Assignment & Recording
+    S->>DB: recordDrawing()
+    S->>DB: updateStudentHistory()
+    S->>DB: updateWeights()
+
+    %% Phase 6: Notifications
+    rect rgb(220, 220, 255)
+        Note right of S: Communication
+        S->>N: notifySelectedStudent()
+        S->>N: notifyStaff()
+        S->>N: updateCohortCalendar()
+        S->>N: sendPreparationGuidelines()
+    end
+
+    %% Phase 7: Exception Handling
+    alt Student Reports Issue
+        Note right of S: Gestion Exceptions
+        S->>Staff: reportIssue()
+        Staff->>S: validateIssue()
+        
+        alt Valid Issue
+            Staff->>S: initiateRedraw()
+            S->>DB: recordRedrawReason()
+            S->>D: restartProcess()
+        else Invalid Issue
+            Staff->>N: notifyRejection()
+        end
+    end

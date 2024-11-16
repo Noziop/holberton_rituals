@@ -1,0 +1,67 @@
+sequenceDiagram
+    participant S as System
+    participant St as Student
+    participant M as Metrics
+    participant N as Notifications
+    participant R as Rewards
+
+    %% Phase 1: Point Triggers
+    rect rgb(200, 220, 255)
+        Note right of S: Activity Detection
+        S->>M: monitorActivities()
+        
+        alt SOD Participation
+            S->>M: calculateSODPoints()
+            M->>M: applyQualityMultiplier()
+        else Volunteer Action
+            S->>M: calculateVolunteerPoints()
+            M->>M: applyFrequencyBonus()
+        else StandUp Engagement
+            S->>M: calculateStandUpPoints()
+            M->>M: applyConsistencyBonus()
+        end
+    end
+
+    %% Phase 2: Point Calculation
+    rect rgb(220, 200, 255)
+        Note right of S: Points Processing
+        M->>M: checkStreakBonus()
+        M->>M: applyWeightMultipliers()
+        M->>M: calculateTotalPoints()
+    end
+
+    %% Phase 3: Level Management
+    M->>S: updateTotalPoints()
+    S->>S: checkLevelProgress()
+    
+    alt Level Up
+        S->>R: unlockNewPerks()
+        S->>N: sendLevelUpNotification()
+        N-->>St: celebrateMilestone()
+    end
+
+    %% Phase 4: Streak Management
+    rect rgb(255, 220, 200)
+        Note right of S: Streak Processing
+        S->>M: updateStreakCounter()
+        
+        alt Streak Milestone
+            M->>R: awardStreakBonus()
+            S->>N: announceStreakAchievement()
+        else Streak at Risk
+            S->>N: sendStreakAlert()
+        end
+    end
+
+    %% Phase 5: Weekly Summary
+    S->>M: generateWeeklyStats()
+    S->>N: sendPointsSummary()
+    N-->>St: deliverProgressReport()
+
+    %% Phase 6: Leaderboard Update
+    S->>S: updateLeaderboard()
+    
+    alt Top Performer
+        S->>N: highlightAchievement()
+        N-->>St: sendSpecialRecognition()
+    end

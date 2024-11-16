@@ -1,0 +1,63 @@
+---
+title: Database Indexes
+---
+erDiagram
+    USERS {
+        int id PK
+        varchar username "UNIQUE INDEX"
+        varchar email "UNIQUE INDEX"
+        varchar slack_id "UNIQUE INDEX"
+        enum role "INDEX"
+    }
+
+    STUDENTS {
+        int id PK
+        int cohort_id "INDEX"
+        int user_id "INDEX"
+        composite user_cohort "UNIQUE(user_id,cohort_id)"
+    }
+
+    DRAWINGS {
+        int id PK
+        int student_id "INDEX"
+        composite dates "INDEX(drawing_date,presentation_date)"
+    }
+
+    DRAWING_HISTORY {
+        int id PK
+        int student_id "INDEX"
+        composite dates "INDEX(drawing_date,presentation_date)"
+    }
+
+    FEEDBACK {
+        int id PK
+        int student_id "INDEX"
+        date feedback_date "INDEX"
+        enum ritual_type "INDEX"
+    }
+
+    VOLUNTEER_SLOTS {
+        int id PK
+        date slot_date "INDEX"
+        enum ritual_type "INDEX"
+        composite slot_unique "UNIQUE(ritual_type,slot_date)"
+    }
+
+    VOLUNTEER_ASSIGNMENTS {
+        int id PK
+        int student_id "INDEX"
+        int slot_id "INDEX"
+        composite assignment_unique "UNIQUE(student_id,slot_id)"
+    }
+
+    BADGES {
+        int id PK
+        enum badge_type "INDEX"
+    }
+
+    STUDENT_BADGES {
+        int id PK
+        int student_id "INDEX"
+        int badge_id "INDEX"
+        composite badge_unique "UNIQUE(student_id,badge_id)"
+    }

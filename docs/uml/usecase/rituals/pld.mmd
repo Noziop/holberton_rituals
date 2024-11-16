@@ -1,0 +1,49 @@
+---
+title: PLD System
+---
+erDiagram
+    PLD {
+        uuid id
+        uuid swe_id
+        string topic
+        datetime date
+        string status
+        int max_group_size
+        float min_participation
+    }
+
+    PLD_GROUP {
+        uuid id
+        uuid leader_id
+        string progress_status
+        float completion_rate
+        float collaboration_score
+    }
+
+    PLD_MEMBER {
+        uuid user_id
+        uuid group_id
+        string role
+        float contribution_score
+    }
+
+    SWE_INSTRUCTIONS {
+        uuid pld_id
+        string content
+        string difficulty_level
+        int estimated_duration
+    }
+
+    PLD_FEEDBACK {
+        uuid id
+        int content_clarity
+        int difficulty_rating
+        int time_management
+        string comments
+    }
+
+    PLD ||--o{ PLD_GROUP : organizes
+    PLD_GROUP ||--o{ PLD_MEMBER : includes
+    PLD ||--|| SWE_INSTRUCTIONS : guided_by
+    PLD ||--o{ PLD_FEEDBACK : collects
+    USER }|--o{ PLD : participates

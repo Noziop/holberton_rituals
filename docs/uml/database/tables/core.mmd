@@ -1,0 +1,79 @@
+---
+title: Core Tables (core.mmd) 2.0
+---
+erDiagram
+    %% Existing Core
+    users {
+        int id PK
+        varchar username "UNIQUE NOT NULL"
+        varchar first_name "NOT NULL"
+        varchar last_name "NOT NULL"
+        varchar password "NOT NULL"
+        enum role "(directrice,swe,ssm,student)"
+        varchar email "UNIQUE NOT NULL"
+        timestamp created_at
+        timestamp updated_at
+        timestamp last_login
+        boolean is_active "DEFAULT 1"
+        varchar slack_id
+    }
+
+    students {
+        int id PK
+        int cohort_id FK "NULL"
+        int user_id FK "NOT NULL"
+    }
+
+    cohorts {
+        int id PK
+        varchar name "NOT NULL"
+        date start_date "NOT NULL"
+        date end_date "NOT NULL"
+    }
+
+    %% New Metrics & Achievements
+    student_metrics {
+        int id PK
+        int student_id FK
+        float participation_score
+        float presentation_quality
+        float engagement_level
+        int presentations_count
+        int volunteer_count
+        timestamp last_updated
+    }
+
+    performance_history {
+        int id PK
+        int student_id FK
+        string metric_type
+        float old_value
+        float new_value
+        string change_reason
+        timestamp recorded_at
+    }
+
+    notification_preferences {
+        int user_id PK,FK
+        boolean email_enabled "DEFAULT true"
+        boolean slack_enabled "DEFAULT true"
+        time quiet_hours_start
+        time quiet_hours_end
+    }
+
+    %% New Volunteer System
+    volunteer_preferences {
+        int student_id PK,FK
+        boolean sod_volunteer "DEFAULT false"
+        boolean standup_volunteer "DEFAULT false"
+        boolean pld_volunteer "DEFAULT false"
+        text availability_notes "NULL"
+        timestamp last_updated
+    }
+
+    %% Relations
+    users ||--o{ notification_preferences : has
+    students ||--|| student_metrics : tracks
+    students ||--o{ performance_history : records
+    students ||--|| volunteer_preferences : configures
+

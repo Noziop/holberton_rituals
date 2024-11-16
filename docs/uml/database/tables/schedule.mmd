@@ -1,0 +1,98 @@
+---
+title: Schedule Management Tables 2.0
+---
+erDiagram
+    %% Existing Schedule Tables
+    drawing_days {
+        int id PK
+        int cohort_id FK "NOT NULL"
+        enum day "(monday,tuesday,wednesday,thursday,friday)"
+    }
+
+    drawings {
+        int id PK
+        int student_id FK "NULL"
+        date drawing_date "NOT NULL"
+        date presentation_date "NOT NULL"
+    }
+
+    drawing_history {
+        int id PK
+        int student_id FK "NOT NULL"
+        date drawing_date "NOT NULL"
+        date presentation_date "NOT NULL"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    %% New Challenge System
+    challenges {
+        int id PK
+        string title "NOT NULL"
+        string description "NOT NULL"
+        int points_value "NOT NULL"
+        date start_date "NOT NULL"
+        date end_date "NOT NULL"
+        enum challenge_type "(presentation,participation,improvement,volunteer)"
+        boolean is_active "DEFAULT true"
+    }
+
+    student_challenges {
+        int id PK
+        int student_id FK "NOT NULL"
+        int challenge_id FK "NOT NULL"
+        boolean completed "DEFAULT false"
+        int points_earned "DEFAULT 0"
+        timestamp completed_at "NULL"
+    }
+
+    %% Volunteer Schedule Management
+    volunteer_slots {
+        int id PK
+        enum ritual_type "(SOD,STANDUP,PLD)"
+        date slot_date "NOT NULL"
+        int max_volunteers "DEFAULT 1"
+        boolean filled "DEFAULT false"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    volunteer_assignments {
+        int id PK
+        int student_id FK "NOT NULL"
+        int slot_id FK "NOT NULL"
+        boolean confirmed "DEFAULT false"
+        timestamp assigned_at "DEFAULT NOW()"
+    }
+
+    %% Existing Time Management
+    public_holidays {
+        int id PK
+        date date "NOT NULL"
+        varchar description "NOT NULL"
+        int cohort_id FK "NULL"
+    }
+
+    vacations {
+        int id PK
+        int cohort_id FK "NULL"
+        date start_date "NOT NULL"
+        date end_date "NOT NULL"
+    }
+
+    unavailabilities {
+        int id PK
+        int student_id FK "NULL"
+        date start_date "NOT NULL"
+        date end_date "NOT NULL"
+    }
+
+    %% Relations
+    cohorts ||--o{ drawing_days : defines
+    cohorts ||--o{ public_holidays : has
+    cohorts ||--o{ vacations : schedules
+    students ||--o{ drawings : participates_in
+    students ||--o{ drawing_history : has_participated_in
+    students ||--o{ unavailabilities : declares
+    students ||--o{ student_challenges : participates_in
+    students ||--o{ volunteer_assignments : volunteers_for
+    challenges ||--o{ student_challenges : includes
+    volunteer_slots ||--o{ volunteer_assignments : filled_by

@@ -1,0 +1,54 @@
+---
+title: Notification System
+---
+erDiagram
+    NOTIFICATION {
+        uuid id
+        string type
+        datetime scheduled_time
+        boolean sent
+        string status
+    }
+    
+    NOTIFICATION_PREFERENCES {
+        uuid user_id
+        boolean email_enabled
+        boolean slack_enabled
+        boolean in_app_enabled
+        time quiet_hours_start
+        time quiet_hours_end
+    }
+
+    NOTIFICATION_TEMPLATE {
+        uuid id
+        string ritual_type
+        string content
+        string variables
+    }
+
+    NOTIFICATION_SCHEDULE {
+        uuid id
+        string ritual_type
+        int days_before
+        boolean mandatory
+    }
+
+    USER ||--o{ NOTIFICATION : receives
+    USER ||--|| NOTIFICATION_PREFERENCES : configures
+    NOTIFICATION }o--|| NOTIFICATION_TEMPLATE : uses
+    RITUAL ||--o{ NOTIFICATION : triggers
+    NOTIFICATION_SCHEDULE ||--o{ NOTIFICATION : plans
+    NOTIFICATION_TEMPLATE ||--o{ RITUAL : applies_to
+
+    %% Specific notification schedules
+    SOD_SCHEDULE {
+        int d_minus_15
+        int d_minus_7
+        int d_minus_5
+        int d_minus_3
+    }
+
+    STANDUP_SCHEDULE {
+        int d_minus_7
+        int d_minus_1
+    }

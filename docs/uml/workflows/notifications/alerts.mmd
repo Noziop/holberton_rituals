@@ -1,0 +1,86 @@
+sequenceDiagram
+    participant S as System
+    participant A as AlertEngine
+    participant U as User
+    participant Staff
+    participant M as Metrics
+
+    %% Phase 1: Alert Detection
+    rect rgb(255, 200, 200)
+        Note right of S: Critical Events
+        alt Missed Deadline
+            S->>A: triggerUrgentAlert()
+        else Performance Drop
+            S->>A: triggerWarningAlert()
+        else Achievement
+            S->>A: triggerCelebrationAlert()
+        else System Issue
+            S->>A: triggerTechnicalAlert()
+        end
+    end
+
+    %% Phase 2: Priority Assessment
+    rect rgb(200, 220, 255)
+        Note right of A: Alert Classification
+        A->>A: determinePriority()
+        A->>A: checkEscalationRules()
+        
+        alt High Priority
+            A->>Staff: notifyStaff()
+            A->>A: enableMultiChannel()
+        else Medium Priority
+            A->>A: standardDelivery()
+        else Low Priority
+            A->>A: queueForBatch()
+        end
+    end
+
+    %% Phase 3: Smart Delivery
+    A->>A: checkUserStatus()
+    
+    alt Active User
+        A-->>U: sendImmediateAlert()
+    else Inactive User
+        A->>A: queueForReconnection()
+        A-->>Staff: notifyInactivity()
+    end
+
+    %% Phase 4: Escalation Management
+    rect rgb(220, 200, 255)
+        Note right of A: Response Tracking
+        
+        alt No Response
+            A->>A: escalateAlert()
+            A->>Staff: requestIntervention()
+        else User Acknowledges
+            U->>A: confirmReceipt()
+            A->>M: recordResponse()
+        end
+    end
+
+    %% Phase 5: Follow-up Actions
+    alt Critical Alert
+        Staff->>U: provideSupport()
+        Staff->>S: documentIntervention()
+    else Achievement Alert
+        S->>M: updateAchievements()
+        A-->>U: sendCongratulations()
+    end
+
+    %% Phase 6: Analytics & Optimization
+    rect rgb(200, 255, 200)
+        Note right of S: Performance Analysis
+        M->>S: analyzeAlertEffectiveness()
+        M->>S: updateAlertPatterns()
+        S->>A: optimizeAlertStrategy()
+    end
+
+    %% Phase 7: Resolution
+    alt Issue Resolved
+        S->>A: closeAlert()
+        A-->>U: sendResolutionConfirmation()
+        M->>S: updateMetrics()
+    else Ongoing Issue
+        S->>A: maintainAlertStatus()
+        A->>Staff: keepMonitoring()
+    end

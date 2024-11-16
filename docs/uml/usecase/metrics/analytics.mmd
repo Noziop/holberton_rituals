@@ -1,0 +1,55 @@
+---
+title: Analytics & Metrics System
+---
+erDiagram
+    GLOBAL_METRICS {
+        uuid id
+        uuid cohort_id
+        datetime period_start
+        datetime period_end
+        float sod_completion_rate
+        float standup_effectiveness
+        float pld_engagement
+        float overall_participation
+        float warning_rate
+    }
+
+    USER_METRICS {
+        uuid user_id
+        float participation_score
+        float warning_count
+        datetime last_participation
+        float average_performance
+    }
+
+    RITUAL_METRICS {
+        uuid ritual_id
+        string ritual_type
+        float completion_rate
+        float satisfaction_score
+        int participant_count
+        float duration_average
+    }
+
+    WEIGHT_HISTORY {
+        uuid user_id
+        string ritual_type
+        float base_weight
+        float modifiers
+        datetime calculated_at
+    }
+
+    PERFORMANCE_TRENDS {
+        uuid entity_id
+        string entity_type
+        string trend_type
+        float trend_value
+        datetime period
+    }
+
+    COHORT ||--o{ GLOBAL_METRICS : tracks
+    USER ||--o{ USER_METRICS : measures
+    USER ||--o{ WEIGHT_HISTORY : records
+    RITUAL ||--o{ RITUAL_METRICS : analyzes
+    GLOBAL_METRICS ||--o{ PERFORMANCE_TRENDS : identifies
+    USER_METRICS ||--o{ PERFORMANCE_TRENDS : analyzes

@@ -1,0 +1,43 @@
+---
+title: Redemption System
+---
+erDiagram
+    REDEMPTION_PROGRESS {
+        uuid user_id
+        int current_points
+        int required_points
+        string status
+        datetime started_at
+        datetime updated_at
+    }
+
+    REDEMPTION_CHALLENGE {
+        uuid id
+        string challenge_type
+        int points_value
+        string requirements
+        string verification_method
+    }
+
+    IMPROVEMENT_METRIC {
+        uuid user_id
+        string metric_type
+        float start_value
+        float current_value
+        float target_value
+        float improvement_rate
+    }
+
+    REDEMPTION_MILESTONE {
+        uuid id
+        int points_threshold
+        string reward_type
+        float weight_reduction
+        boolean achieved
+    }
+
+    USER ||--|| REDEMPTION_PROGRESS : tracks
+    USER ||--o{ IMPROVEMENT_METRIC : measures
+    REDEMPTION_PROGRESS ||--o{ REDEMPTION_CHALLENGE : includes
+    REDEMPTION_PROGRESS ||--o{ REDEMPTION_MILESTONE : achieves
+    IMPROVEMENT_METRIC ||--o{ REDEMPTION_MILESTONE : influences

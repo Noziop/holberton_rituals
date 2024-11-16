@@ -1,0 +1,32 @@
+---
+title: Database Relations and Constraints
+---
+erDiagram
+    %% Core Relations
+    USERS ||--o{ STUDENTS : "1 user can be 1 student"
+    USERS ||--o{ USER_PERMISSIONS : "1 user has many permissions"
+    USERS ||--o{ NOTIFICATION_PREFERENCES : "1 user has 1 preference set"
+    USERS ||--o{ VOLUNTEER_PREFERENCES : "1 user has 1 volunteer profile"
+
+    %% Student Relations
+    STUDENTS ||--o{ DRAWINGS : "1 student has many drawings"
+    STUDENTS ||--o{ DRAWING_HISTORY : "ON DELETE CASCADE"
+    STUDENTS ||--o{ STANDUP_FEEDBACK : "ON DELETE CASCADE"
+    STUDENTS ||--o{ SOD_FEEDBACK : "ON DELETE CASCADE"
+    STUDENTS ||--o{ PLD_SUBMISSIONS : "ON DELETE CASCADE"
+    STUDENTS ||--o{ VOLUNTEER_ASSIGNMENTS : "ON DELETE CASCADE"
+    STUDENTS ||--|| STUDENT_METRICS : "1 student has 1 metric set"
+
+    %% Cohort Management
+    COHORTS ||--o{ STUDENTS : "1 cohort has many students"
+    COHORTS ||--o{ PUBLIC_HOLIDAYS : "1 cohort has specific holidays"
+    COHORTS ||--o{ VACATIONS : "1 cohort has vacation periods"
+    COHORTS ||--o{ DRAWING_DAYS : "1 cohort defines drawing days"
+
+    %% Volunteer System
+    VOLUNTEER_SLOTS ||--o{ VOLUNTEER_ASSIGNMENTS : "1 slot has max_volunteers"
+    VOLUNTEER_ASSIGNMENTS ||--o{ VOLUNTEER_FEEDBACK : "1 assignment gets feedback"
+
+    %% Achievement System
+    BADGES ||--o{ STUDENT_BADGES : "1 badge can be earned by many"
+    ACHIEVEMENT_RULES ||--o{ STUDENT_BADGES : "1 rule triggers many badges"

@@ -1,0 +1,36 @@
+---
+title: User Management System
+---
+erDiagram
+    STAFF ||--o{ USER : creates
+    STAFF ||--o{ REPORT : generates
+    STAFF ||--o{ NOTIFICATION : configures
+    STAFF ||--o{ PROFILE : manages
+    STAFF ||--o{ METRICS : views
+    STAFF ||--o{ DASHBOARD : views
+    STAFF ||--o{ DRAWER : operates
+    STAFF ||--o{ PARTICIPATION : tracks
+    USER ||--o{ NOTIFICATION : configures
+    USER ||--o{ PROFILE : manages
+    USER ||--o{ METRICS : views
+    USER ||--o{ SANCTION : receives
+    DRAWER ||--o{ USER : selects
+    DRAWER ||--o{ RITUAL : assigns
+    RITUAL {
+        string type
+        datetime date
+        string status
+    }
+    USER {
+        uuid id
+        string email
+        string slack_id
+        float weight
+        boolean active
+    }
+    DRAWER {
+        uuid id
+        string ritual_type
+        datetime draw_date
+        float weight_factor
+    }

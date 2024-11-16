@@ -1,0 +1,47 @@
+---
+title: Violations Management System
+---
+erDiagram
+    INCIDENT {
+        uuid id
+        uuid user_id
+        string ritual_type
+        string violation_type
+        string severity
+        datetime date
+        string description
+        boolean automatic
+        string staff_notes
+    }
+
+    SANCTION {
+        uuid id
+        uuid user_id
+        string type
+        datetime start_date
+        datetime end_date
+        string status
+        float weight_modifier
+        string applied_by
+    }
+
+    VIOLATION_HISTORY {
+        uuid user_id
+        int warning_count
+        string current_level
+        datetime last_incident
+        float severity_score
+    }
+
+    AUTOMATIC_TRIGGER {
+        string violation_type
+        int occurrence_threshold
+        string sanction_type
+        boolean requires_review
+    }
+
+    USER ||--o{ INCIDENT : receives
+    USER ||--o{ SANCTION : gets
+    USER ||--|| VIOLATION_HISTORY : maintains
+    INCIDENT ||--o{ SANCTION : triggers
+    AUTOMATIC_TRIGGER ||--o{ INCIDENT : defines

@@ -1,0 +1,73 @@
+sequenceDiagram
+    participant S as System
+    participant St as Student
+    participant B as BadgeSystem
+    participant N as Notifications
+    participant M as Metrics
+
+    %% Phase 1: Badge Monitoring
+    rect rgb(200, 220, 255)
+        Note right of S: Achievement Check
+        S->>B: monitorAchievements()
+        
+        alt SOD Excellence
+            B->>B: checkPresentationStreak()
+            B->>B: evaluateFeedbackScores()
+        else Volunteer Champion
+            B->>B: checkVolunteerCount()
+            B->>B: evaluateVolunteerRatings()
+        else Community Hero
+            B->>B: checkHelpfulnessScore()
+            B->>B: evaluatePeerFeedback()
+        end
+    end
+
+    %% Phase 2: Badge Qualification
+    rect rgb(220, 200, 255)
+        Note right of S: Badge Processing
+        B->>B: validateCriteria()
+        B->>B: checkPrerequisites()
+        B->>M: calculateProgress()
+    end
+
+    %% Phase 3: Badge Award
+    alt Badge Earned
+        B->>S: triggerBadgeAward()
+        S->>M: recordAchievement()
+        
+        rect rgb(255, 220, 200)
+            Note right of S: Reward Processing
+            M->>M: addBonusPoints()
+            M->>M: updateRarity()
+            S->>N: prepareBadgeReveal()
+        end
+        
+        N-->>St: sendBadgeAnimation()
+        N->>N: announceAchievement()
+    else Near Achievement
+        B->>N: sendProgressUpdate()
+        N-->>St: showProgressBar()
+    end
+
+    %% Phase 4: Badge Collection
+    S->>S: updateBadgeGallery()
+    
+    alt Special Combination
+        S->>B: checkBadgeSynergy()
+        B->>M: awardComboBonus()
+        N-->>St: revealSpecialEffect()
+    end
+
+    %% Phase 5: Community Impact
+    S->>S: updateLeaderboard()
+    
+    alt First Achievement
+        N->>N: broadcastMilestone()
+    else Rare Achievement
+        N->>N: highlightRareAccomplishment()
+    end
+
+    %% Phase 6: Future Opportunities
+    B->>S: suggestNextBadges()
+    S->>N: sendBadgeHints()
+    N-->>St: showBadgePathways()

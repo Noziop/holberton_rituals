@@ -1,0 +1,43 @@
+---
+title: StandUp System
+---
+erDiagram
+    STANDUP {
+        uuid id
+        datetime date
+        uuid scrum_master_id
+        datetime start_time
+        datetime end_time
+        string status
+        int duration_minutes
+        int attendance_count
+    }
+
+    STANDUP_ISSUE {
+        uuid id
+        string description
+        string category
+        string priority
+        string status
+        datetime reported_at
+        uuid assigned_to
+    }
+
+    STANDUP_ATTENDANCE {
+        uuid user_id
+        datetime check_in
+        int late_minutes
+        string status
+    }
+
+    SCRUM_MASTER_ROTATION {
+        uuid standup_id
+        uuid current_master
+        uuid next_master
+        float performance_score
+    }
+
+    STANDUP ||--o{ STANDUP_ISSUE : tracks
+    STANDUP ||--o{ STANDUP_ATTENDANCE : records
+    STANDUP ||--|| SCRUM_MASTER_ROTATION : manages
+    USER }|--o{ STANDUP : participates

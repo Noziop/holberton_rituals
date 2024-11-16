@@ -1,0 +1,84 @@
+sequenceDiagram
+    participant S as System
+    participant G as GroupEngine
+    participant DB as Database
+    participant Staff
+    participant N as Notifications
+
+    %% Phase 1: Weekly Check
+    rect rgb(200, 220, 255)
+        Note right of S: Thursday Validation
+        S->>DB: checkIfThursday()
+        S->>DB: checkPublicHoliday()
+        S->>DB: checkVacations()
+        S->>DB: checkStaffExclusions()
+        Note right of S: Vérifie exclusions projet groupe
+    end
+
+    %% Phase 2: Cohort Analysis
+    rect rgb(255, 200, 200)
+        Note right of S: Group Size Calculation
+        S->>DB: getActiveCohortSize()
+        S->>G: calculateOptimalGroupSize()
+        Staff->>G: validateGroupSize()
+    end
+
+    %% Phase 3: Expertise Assessment
+    rect rgb(220, 200, 255)
+        Note right of G: Skill Mapping
+        G->>DB: getActiveStudents()
+        loop Each Student
+            G->>DB: getCurrentProjectScore()
+            G->>DB: getPreviousProjectScores()
+            G->>DB: getPeerReviews()
+            G->>Staff: validateExpertiseLevel()
+            Note right of G: Niveau: Expert/Intermédiaire/Débutant
+        end
+    end
+
+    %% Phase 4: Group Formation
+    rect rgb(200, 255, 200)
+        Note right of G: Balanced Distribution
+        G->>G: categorizeByExpertise()
+        Note right of G: Répartition équilibrée des niveaux
+        
+        loop Each Group
+            G->>G: assignOneExpert()
+            G->>G: assignIntermediates()
+            G->>G: assignBeginners()
+            G->>DB: checkPastCollaborations()
+            Note right of G: Évite les groupes récurrents
+        end
+    end
+
+    %% Phase 5: Staff Review
+    G->>Staff: proposeGroups()
+    Note right of Staff: Vérification équilibre
+    
+    alt Staff Adjustments Needed
+        Staff->>G: requestChanges()
+        G->>G: adjustGroups()
+    else Staff Approves
+        Staff->>S: confirmGroups()
+    end
+
+    %% Phase 6: Assignment & Recording
+    rect rgb(220, 220, 255)
+        Note right of S: Finalization
+        S->>DB: recordGroupAssignments()
+        S->>DB: updateCollaborationHistory()
+        S->>N: notifyGroups()
+    end
+
+    %% Phase 7: Group Support
+    rect rgb(255, 220, 255)
+        Note right of S: Group Setup
+        S->>N: sendGroupGuidelines()
+        S->>N: createGroupChannels()
+        loop Each Group
+            S->>N: identifyGroupExpert()
+            S->>N: sendExpertGuidelines()
+            S->>N: sendSupportResources()
+            Note right of S: Support adapté au niveau
+        end
+    end

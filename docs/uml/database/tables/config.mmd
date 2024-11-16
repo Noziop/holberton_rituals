@@ -1,0 +1,80 @@
+---
+title: Configuration and Gamification System
+---
+erDiagram
+    %% Existing Config
+    configurations {
+        int id PK
+        varchar key "NOT NULL"
+        text valeur "NOT NULL"
+    }
+
+    permissions {
+        int id PK
+        varchar name "UNIQUE NOT NULL"
+        text description "NULL"
+    }
+
+    %% Existing Gamification System
+    badges {
+        int id PK
+        string name "NOT NULL"
+        string description "NOT NULL"
+        string icon_path "NOT NULL"
+        int points_value "DEFAULT 0"
+        enum badge_type "(presentation,participation,helper,achiever,volunteer)"
+        json criteria "NOT NULL"
+    }
+
+    student_badges {
+        int id PK
+        int student_id FK
+        int badge_id FK
+        timestamp earned_at
+        text earned_reason
+    }
+
+    achievement_rules {
+        int id PK
+        string name "NOT NULL"
+        json conditions "NOT NULL"
+        int points_reward "DEFAULT 0"
+        boolean is_active "DEFAULT true"
+        enum frequency "(once,daily,weekly,monthly)"
+    }
+
+    student_points {
+        int student_id PK,FK
+        int total_points "DEFAULT 0"
+        int volunteer_points "DEFAULT 0"
+        int current_streak "DEFAULT 0"
+        int max_streak "DEFAULT 0"
+        timestamp last_activity
+    }
+
+    level_definitions {
+        int id PK
+        string title "NOT NULL"
+        int min_points "NOT NULL"
+        string perks "NULL"
+        string icon_path "NULL"
+    }
+
+    %% New Volunteer Achievement Rules
+    volunteer_achievements {
+        int id PK
+        string name "NOT NULL"
+        enum type "(first_time,streak,diversity)"
+        int points_bonus "DEFAULT 10"
+        json requirements "NOT NULL"
+        boolean active "DEFAULT true"
+    }
+
+    %% Relations
+    users ||--o{ user_permissions : has
+    permissions ||--o{ user_permissions : grants
+    students ||--o{ student_badges : earns
+    badges ||--o{ student_badges : awarded_as
+    students ||--|| student_points : tracks
+    achievement_rules ||--o{ student_badges : triggers
+    volunteer_achievements ||--o{ student_badges : generates
