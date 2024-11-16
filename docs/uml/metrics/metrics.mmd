@@ -1,0 +1,108 @@
+classDiagram
+    class GlobalMetrics {
+        +id: UUID
+        +cohort_id: UUID
+        +period_start: DateTime
+        +period_end: DateTime
+        +sod_completion_rate: Float
+        +standup_effectiveness: Float
+        +pld_engagement: Float
+        +overall_participation: Float
+        +warning_rate: Float
+        +improvement_trends: List[Trend]
+        +calculate_global_metrics()
+        +generate_trend_report()
+        +identify_risk_factors()
+        +suggest_improvements()
+        +export_analytics()
+        +predict_trends()
+    }
+
+    class WeightCalculator {
+        +id: UUID
+        +user_id: UUID
+        +ritual_type: RitualType
+        +base_weight: Float
+        +participation_modifier: Float
+        +performance_modifier: Float
+        +warning_modifier: Float
+        +last_participation_date: DateTime
+        +consecutive_misses: Integer
+        +calculate_current_weight()
+        +apply_warning_penalty()
+        +apply_performance_bonus()
+        +reset_modifiers()
+        +get_weight_history()
+        +predict_next_weight()
+    }
+
+    class MetricSnapshot {
+        +id: UUID
+        +metric_type: MetricType
+        +value: Float
+        +timestamp: DateTime
+        +context: Dict
+        +capture_snapshot()
+        +compare_with_previous()
+        +analyze_trend()
+    }
+
+    class PerformanceIndicator {
+        +id: UUID
+        +indicator_type: IndicatorType
+        +current_value: Float
+        +target_value: Float
+        +threshold_warning: Float
+        +threshold_critical: Float
+        +evaluate_status()
+        +calculate_gap()
+        +suggest_actions()
+    }
+
+    class CohortAnalytics {
+        +id: UUID
+        +cohort_id: UUID
+        +time_period: TimePeriod
+        +ritual_stats: Dict
+        +participation_trends: List[Trend]
+        +engagement_levels: Dict
+        +warning_patterns: List[Pattern]
+        +analyze_cohort_performance()
+        +identify_patterns()
+        +generate_recommendations()
+        +export_report()
+    }
+
+    class MetricType {
+        <<enumeration>>
+        PARTICIPATION
+        PERFORMANCE
+        ENGAGEMENT
+        WARNING
+        IMPROVEMENT
+    }
+
+    class IndicatorType {
+        <<enumeration>>
+        ATTENDANCE
+        QUALITY
+        TIMELINESS
+        ENGAGEMENT
+        LEADERSHIP
+    }
+
+    class TimePeriod {
+        <<enumeration>>
+        DAILY
+        WEEKLY
+        MONTHLY
+        QUARTERLY
+        YEARLY
+    }
+
+    GlobalMetrics "1" -- "*" MetricSnapshot
+    GlobalMetrics "1" -- "*" PerformanceIndicator
+    GlobalMetrics "1" -- "1" CohortAnalytics
+    MetricSnapshot "1" -- "1" MetricType
+    PerformanceIndicator "1" -- "1" IndicatorType
+    CohortAnalytics "1" -- "1" TimePeriod

@@ -1,0 +1,37 @@
+classDiagram
+    class User {
+        +id: UUID
+        +email: String
+        +username: String
+        +password_hash: String
+        +slack_id: String
+        +slack_cohort_channel: String
+        +role: Role
+        +cohort: Cohort
+        +participation_score: Float
+        +last_participation: DateTime
+        +active: Boolean
+        +warning_count: Integer
+        +sanction_level: SanctionLevel
+        +notification_preferences: NotificationPreferences
+        +create()
+        +update()
+        +delete()
+        +get_metrics()
+        +update_score()
+        +get_participation_history()
+        +get_upcoming_events()
+        +validate_credentials()
+        +update_warning_count()
+        +escalate_sanction_level()
+    }
+
+    class Role {
+        <<enumeration>>
+        ADMIN
+        STAFF
+        STUDENT
+        SWE
+    }
+
+    User "1" -- "1" Role

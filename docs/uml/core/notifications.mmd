@@ -1,0 +1,50 @@
+classDiagram
+    class NotificationPreferences {
+        +id: UUID
+        +user_id: UUID
+        +email_enabled: Boolean
+        +slack_enabled: Boolean
+        +sms_enabled: Boolean
+        +quiet_hours_start: Time
+        +quiet_hours_end: Time
+        +minimum_notice_period: Integer
+        +preferred_channel: Channel
+        +update_preferences()
+        +is_notification_allowed()
+        +get_active_channels()
+    }
+
+    class Channel {
+        <<enumeration>>
+        EMAIL
+        SLACK
+        SMS
+        IN_APP
+    }
+
+    class NotificationSchedule {
+        +id: UUID
+        +user_id: UUID
+        +ritual_id: UUID
+        +ritual_type: RitualType
+        +scheduled_time: DateTime
+        +sent: Boolean
+        +status: NotificationStatus
+        +schedule()
+        +send()
+        +check_quiet_hours()
+        +retry_failed()
+    }
+
+    class NotificationStatus {
+        <<enumeration>>
+        PENDING
+        SENT
+        FAILED
+        READ
+        ACKNOWLEDGED
+    }
+
+    NotificationPreferences "1" -- "1..*" Channel
+    NotificationPreferences "1" -- "*" NotificationSchedule
+    NotificationSchedule "1" -- "1" NotificationStatus

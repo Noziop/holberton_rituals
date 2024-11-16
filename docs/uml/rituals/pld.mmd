@@ -1,0 +1,116 @@
+classDiagram
+    class PLD {
+        +id: UUID
+        +date: DateTime
+        +cohort_id: UUID
+        +swe_id: UUID
+        +topic: String
+        +learning_objectives: List[String]
+        +required_prerequisites: List[String]
+        +materials_path: String
+        +max_group_size: Integer
+        +min_participation_rate: Float
+        +status: PLDStatus
+        +create()
+        +update()
+        +validate_prerequisites()
+        +form_groups()
+        +track_attendance()
+        +generate_effectiveness_report()
+    }
+
+    class PLDStatus {
+        <<enumeration>>
+        PLANNED
+        MATERIALS_PENDING
+        MATERIALS_READY
+        IN_PROGRESS
+        COMPLETED
+        CANCELLED
+        RESCHEDULED
+    }
+
+    class PLDGroup {
+        +id: UUID
+        +pld_id: UUID
+        +members: List[UUID]
+        +leader_id: UUID
+        +progress_status: ProgressStatus
+        +completion_rate: Float
+        +collaboration_score: Float
+        +create_group()
+        +add_member()
+        +remove_member()
+        +update_progress()
+        +submit_group_feedback()
+    }
+
+    class ProgressStatus {
+        <<enumeration>>
+        NOT_STARTED
+        IN_PROGRESS
+        STUCK
+        COMPLETED
+        NEEDS_HELP
+    }
+
+    class SWEInstructions {
+        +id: UUID
+        +pld_id: UUID
+        +swe_id: UUID
+        +instructions: String
+        +resources: List[String]
+        +difficulty_level: DifficultyLevel
+        +estimated_duration: Integer
+        +submission_requirements: List[String]
+        +create()
+        +update()
+        +validate()
+        +publish()
+    }
+
+    class DifficultyLevel {
+        <<enumeration>>
+        BEGINNER
+        INTERMEDIATE
+        ADVANCED
+        EXPERT
+    }
+
+    class PLDMetrics {
+        +id: UUID
+        +pld_id: UUID
+        +attendance_rate: Float
+        +group_performance: Float
+        +objective_completion: Float
+        +student_satisfaction: Float
+        +difficulty_rating: Float
+        +calculate_effectiveness()
+        +analyze_group_dynamics()
+        +track_learning_progress()
+        +generate_recommendations()
+    }
+
+    class PLDFeedback {
+        +id: UUID
+        +pld_id: UUID
+        +user_id: UUID
+        +group_id: UUID
+        +content_clarity: Integer
+        +difficulty_appropriateness: Integer
+        +time_management: Integer
+        +group_collaboration: Integer
+        +learning_value: Integer
+        +comments: String
+        +submit_feedback()
+        +analyze_feedback()
+        +suggest_improvements()
+    }
+
+    PLD "1" -- "1" PLDStatus
+    PLD "1" -- "*" PLDGroup
+    PLD "1" -- "1" SWEInstructions
+    PLD "1" -- "1" PLDMetrics
+    PLD "1" -- "*" PLDFeedback
+    PLDGroup "1" -- "1" ProgressStatus
+    SWEInstructions "1" -- "1" DifficultyLevel

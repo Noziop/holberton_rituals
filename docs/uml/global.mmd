@@ -1,0 +1,11 @@
+graph TD
+    U[User] --> N[Notifications]
+    U --> P[Participation]
+    U --> S[Sanctions]
+    P --> R1[StandUp]
+    P --> R2[SOD]
+    P --> R3[PLD]
+    R1 --> M[Metrics]
+    R2 --> M
+    R3 --> M
+    S --> M

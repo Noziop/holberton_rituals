@@ -1,0 +1,99 @@
+classDiagram
+    class SOD {
+        +id: UUID
+        +date: DateTime
+        +presenter_id: UUID
+        +cohort_id: UUID
+        +presentation_topic: String
+        +submission_deadline: DateTime
+        +actual_submission_time: DateTime
+        +presentation_file_path: String
+        +presentation_duration_minutes: Integer
+        +status: SODStatus
+        +feedback_score: Float
+        +staff_approval_status: ApprovalStatus
+        +rehearsal_completed: Boolean
+        +create()
+        +update()
+        +submit_presentation()
+        +validate_submission()
+        +record_rehearsal()
+        +generate_presentation_report()
+        +calculate_final_score()
+        +trigger_escalation()
+    }
+
+    class SODStatus {
+        <<enumeration>>
+        SCHEDULED
+        SUBMISSION_PENDING
+        SUBMITTED
+        APPROVED
+        REJECTED
+        COMPLETED
+        MISSED
+        POSTPONED
+    }
+
+    class ApprovalStatus {
+        <<enumeration>>
+        PENDING_REVIEW
+        APPROVED
+        NEEDS_REVISION
+        REJECTED
+        LATE_SUBMISSION
+    }
+
+    class SODNotificationSchedule {
+        +id: UUID
+        +sod_id: UUID
+        +presenter_id: UUID
+        +d_minus_15_sent: Boolean
+        +d_minus_7_sent: Boolean
+        +d_minus_5_sent: Boolean
+        +d_minus_3_sent: Boolean
+        +d_minus_1_sent: Boolean
+        +warning_sent: Boolean
+        +schedule_notifications()
+        +check_submission_status()
+        +send_reminder()
+        +send_warning()
+        +notify_staff()
+    }
+
+    class SODFeedback {
+        +id: UUID
+        +sod_id: UUID
+        +reviewer_id: UUID
+        +presentation_clarity: Integer
+        +topic_mastery: Integer
+        +time_management: Integer
+        +qa_handling: Integer
+        +materials_quality: Integer
+        +overall_score: Float
+        +improvement_suggestions: String
+        +staff_comments: String
+        +submit_feedback()
+        +calculate_scores()
+        +generate_feedback_report()
+    }
+
+    class SODMetrics {
+        +id: UUID
+        +sod_id: UUID
+        +preparation_time: Integer
+        +submission_timeliness: Float
+        +presentation_quality: Float
+        +audience_engagement: Float
+        +improvement_trend: Float
+        +calculate_metrics()
+        +analyze_performance()
+        +generate_improvement_suggestions()
+        +track_progress()
+    }
+
+    SOD "1" -- "1" SODStatus
+    SOD "1" -- "1" ApprovalStatus
+    SOD "1" -- "1" SODNotificationSchedule
+    SOD "1" -- "*" SODFeedback
+    SOD "1" -- "1" SODMetrics

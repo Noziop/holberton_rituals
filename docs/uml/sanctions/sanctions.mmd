@@ -1,0 +1,123 @@
+classDiagram
+    class SanctionEngine {
+        +id: UUID
+        +user_id: UUID
+        +current_level: SanctionLevel
+        +warning_count: Integer
+        +incident_history: List[Incident]
+        +last_sanction_date: DateTime
+        +redemption_points: Integer
+        +active_sanctions: List[Sanction]
+        +evaluate_violation()
+        +apply_sanction()
+        +calculate_next_level()
+        +track_improvement()
+        +generate_warning()
+        +notify_stakeholders()
+    }
+
+    class Incident {
+        +id: UUID
+        +user_id: UUID
+        +ritual_type: RitualType
+        +violation_type: ViolationType
+        +severity: SeverityLevel
+        +date: DateTime
+        +description: String
+        +evidence: List[String]
+        +automatic: Boolean
+        +staff_notes: String
+        +record_incident()
+        +evaluate_severity()
+        +link_to_ritual()
+        +generate_report()
+        +escalate_if_needed()
+    }
+
+    class ViolationType {
+        <<enumeration>>
+        NO_SHOW
+        LATE_SUBMISSION
+        POOR_PREPARATION
+        REPEATED_ABSENCE
+        MISSED_DEADLINE
+        QUALITY_BELOW_STANDARD
+        RESPONSIBILITY_AVOIDANCE
+        PATTERN_OF_BEHAVIOR
+    }
+
+    class SeverityLevel {
+        <<enumeration>>
+        MINOR
+        MODERATE
+        MAJOR
+        CRITICAL
+    }
+
+    class AutomaticSanction {
+        +id: UUID
+        +user_id: UUID
+        +trigger_condition: TriggerCondition
+        +sanction_type: SanctionType
+        +start_date: DateTime
+        +end_date: DateTime
+        +status: SanctionStatus
+        +applied_by: String
+        +apply_sanction()
+        +validate_duration()
+        +check_conditions()
+        +notify_application()
+        +record_effectiveness()
+    }
+
+    class SanctionType {
+        <<enumeration>>
+        WEIGHT_INCREASE_25
+        WEIGHT_INCREASE_50
+        WEIGHT_INCREASE_100
+        MANDATORY_NEXT_RITUAL
+        MANDATORY_REHEARSAL
+        EXTRA_PREPARATION_TIME
+        STAFF_MEETING_REQUIRED
+        PARTICIPATION_FREEZE
+    }
+
+    class RedemptionSystem {
+        +id: UUID
+        +user_id: UUID
+        +current_points: Integer
+        +required_points: Integer
+        +improvement_metrics: List[Metric]
+        +active_challenges: List[Challenge]
+        +redemption_path: String
+        +calculate_points()
+        +track_progress()
+        +verify_improvement()
+        +suggest_actions()
+        +generate_improvement_plan()
+        +award_redemption_points()
+    }
+
+    class ImprovementMetric {
+        +id: UUID
+        +user_id: UUID
+        +metric_type: MetricType
+        +start_value: Float
+        +current_value: Float
+        +target_value: Float
+        +measurement_period: Integer
+        +improvement_rate: Float
+        +track_progress()
+        +calculate_improvement()
+        +predict_achievement()
+        +generate_report()
+        +adjust_targets()
+    }
+
+    SanctionEngine "1" -- "*" Incident
+    SanctionEngine "1" -- "*" AutomaticSanction
+    SanctionEngine "1" -- "1" RedemptionSystem
+    Incident "1" -- "1" ViolationType
+    Incident "1" -- "1" SeverityLevel
+    AutomaticSanction "1" -- "1" SanctionType
+    RedemptionSystem "1" -- "*" ImprovementMetric

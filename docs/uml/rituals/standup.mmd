@@ -1,0 +1,108 @@
+classDiagram
+    class StandUp {
+        +id: UUID
+        +date: DateTime
+        +cohort_id: UUID
+        +scrum_master_id: UUID
+        +start_time: DateTime
+        +end_time: DateTime
+        +status: RitualStatus
+        +max_duration_minutes: Integer
+        +actual_duration_minutes: Integer
+        +attendance_count: Integer
+        +issues_count: Integer
+        +next_scrum_master_id: UUID
+        +weight_calculation_date: DateTime
+        +create()
+        +update()
+        +cancel()
+        +start_session()
+        +end_session()
+        +record_attendance()
+        +calculate_next_scrum_master()
+        +validate_duration()
+        +generate_summary_report()
+        +trigger_notifications()
+        +escalate_issues()
+    }
+
+    class StandUpIssue {
+        +id: UUID
+        +standup_id: UUID
+        +reported_by_id: UUID
+        +description: String
+        +category: IssueCategory
+        +priority: IssuePriority
+        +status: IssueStatus
+        +reported_at: DateTime
+        +resolved_at: DateTime
+        +resolution_description: String
+        +assigned_to_id: UUID
+        +needs_staff_attention: Boolean
+        +create()
+        +update_status()
+        +assign()
+        +resolve()
+        +escalate()
+        +link_to_solution()
+    }
+
+    class RitualStatus {
+        <<enumeration>>
+        SCHEDULED
+        IN_PROGRESS
+        COMPLETED
+        CANCELLED
+        POSTPONED
+    }
+
+    class IssueCategory {
+        <<enumeration>>
+        TECHNICAL
+        CONCEPTUAL
+        RESOURCE_ACCESS
+        WORKFLOW
+        COLLABORATION
+        OTHER
+    }
+
+    class IssuePriority {
+        <<enumeration>>
+        LOW
+        MEDIUM
+        HIGH
+        BLOCKING
+    }
+
+    class IssueStatus {
+        <<enumeration>>
+        REPORTED
+        IN_DISCUSSION
+        ASSIGNED
+        IN_PROGRESS
+        RESOLVED
+        REOPENED
+        NEEDS_FOLLOWUP
+    }
+
+    class StandUpMetrics {
+        +standup_id: UUID
+        +participation_rate: Float
+        +on_time_rate: Float
+        +average_duration: Integer
+        +issues_resolution_rate: Float
+        +scrum_master_performance: Float
+        +engagement_score: Float
+        +recurring_issues: List[Issue]
+        +calculate_metrics()
+        +generate_trend_analysis()
+        +identify_patterns()
+        +flag_concerns()
+        +export_report()
+    }
+
+    StandUp "1" -- "1" RitualStatus
+    StandUp "1" -- "*" StandUpIssue
+    StandUp "1" -- "1" StandUpMetrics
+    StandUpIssue "1" -- "1" IssueCategory
+    StandUpIssue
