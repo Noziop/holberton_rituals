@@ -1,4 +1,5 @@
 classDiagram
+    %% StandUp Management System
     class StandUp {
         +id: UUID
         +date: DateTime
@@ -13,17 +14,21 @@ classDiagram
         +issues_count: Integer
         +next_scrum_master_id: UUID
         +weight_calculation_date: DateTime
-        +create()
-        +update()
-        +cancel()
-        +start_session()
-        +end_session()
-        +record_attendance()
-        +calculate_next_scrum_master()
-        +validate_duration()
-        +generate_summary_report()
-        +trigger_notifications()
-        +escalate_issues()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +create() Boolean
+        +update() Boolean
+        +cancel() Boolean
+        +start_session() SessionResult
+        +end_session() SessionResult
+        +record_attendance() AttendanceResult
+        +calculate_next_scrum_master() UUID
+        +validate_duration() ValidationResult
+        +generate_summary_report() Report
+        +trigger_notifications() NotificationResult
+        +escalate_issues() List~EscalatedIssue~
+        +reschedule(new_date: DateTime) Boolean
+        +get_participation_stats() ParticipationStats
     }
 
     class StandUpIssue {
@@ -39,12 +44,16 @@ classDiagram
         +resolution_description: String
         +assigned_to_id: UUID
         +needs_staff_attention: Boolean
-        +create()
-        +update_status()
-        +assign()
-        +resolve()
-        +escalate()
-        +link_to_solution()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +create() Boolean
+        +update_status() Boolean
+        +assign() AssignmentResult
+        +resolve() ResolutionResult
+        +escalate() EscalationResult
+        +link_to_solution() Boolean
+        +get_issue_history() List~IssueHistory~
+        +add_comment(comment: String) Boolean
     }
 
     class RitualStatus {
@@ -54,6 +63,8 @@ classDiagram
         COMPLETED
         CANCELLED
         POSTPONED
+        DELAYED
+        EXTENDED
     }
 
     class IssueCategory {
@@ -63,6 +74,8 @@ classDiagram
         RESOURCE_ACCESS
         WORKFLOW
         COLLABORATION
+        ENVIRONMENT
+        DOCUMENTATION
         OTHER
     }
 
@@ -72,6 +85,7 @@ classDiagram
         MEDIUM
         HIGH
         BLOCKING
+        CRITICAL
     }
 
     class IssueStatus {
@@ -83,9 +97,12 @@ classDiagram
         RESOLVED
         REOPENED
         NEEDS_FOLLOWUP
+        BLOCKED
+        DUPLICATE
     }
 
     class StandUpMetrics {
+        +id: UUID
         +standup_id: UUID
         +participation_rate: Float
         +on_time_rate: Float
@@ -93,16 +110,37 @@ classDiagram
         +issues_resolution_rate: Float
         +scrum_master_performance: Float
         +engagement_score: Float
-        +recurring_issues: List[Issue]
-        +calculate_metrics()
-        +generate_trend_analysis()
-        +identify_patterns()
-        +flag_concerns()
-        +export_report()
+        +recurring_issues: List~Issue~
+        +created_at: DateTime
+        +updated_at: DateTime
+        +calculate_metrics() MetricsResult
+        +generate_trend_analysis() TrendAnalysis
+        +identify_patterns() List~Pattern~
+        +flag_concerns() List~Concern~
+        +export_report() Report
+        +compare_with_previous() ComparisonResult
+        +predict_trends() PredictionResult
     }
 
-    StandUp "1" -- "1" RitualStatus
-    StandUp "1" -- "*" StandUpIssue
-    StandUp "1" -- "1" StandUpMetrics
-    StandUpIssue "1" -- "1" IssueCategory
-    StandUpIssue
+    class ScrumMasterRotation {
+        +id: UUID
+        +cohort_id: UUID
+        +current_master_id: UUID
+        +next_master_id: UUID
+        +rotation_date: DateTime
+        +performance_score: Float
+        +created_at: DateTime
+        +updated_at: DateTime
+        +calculate_next_master() UUID
+        +update_rotation() Boolean
+        +get_rotation_history() List~RotationHistory~
+        +evaluate_performance() PerformanceScore
+    }
+
+    StandUp "1" -- "1" RitualStatus : has status
+    StandUp "1" -- "*" StandUpIssue : tracks
+    StandUp "1" -- "1" StandUpMetrics : measures
+    StandUp "1" -- "1" ScrumMasterRotation : manages
+    StandUpIssue "1" -- "1" IssueCategory : categorizes
+    StandUpIssue "1" -- "1" IssuePriority : prioritizes
+    StandUpIssue "1" -- "1" IssueStatus : tracks status

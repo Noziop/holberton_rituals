@@ -1,19 +1,24 @@
 classDiagram
+    %% Sanction Management System
     class SanctionEngine {
         +id: UUID
         +user_id: UUID
         +current_level: SanctionLevel
         +warning_count: Integer
-        +incident_history: List[Incident]
+        +incident_history: List~Incident~
         +last_sanction_date: DateTime
         +redemption_points: Integer
-        +active_sanctions: List[Sanction]
-        +evaluate_violation()
-        +apply_sanction()
-        +calculate_next_level()
-        +track_improvement()
-        +generate_warning()
-        +notify_stakeholders()
+        +active_sanctions: List~Sanction~
+        +created_at: DateTime
+        +updated_at: DateTime
+        +evaluate_violation() EvaluationResult
+        +apply_sanction() SanctionResult
+        +calculate_next_level() SanctionLevel
+        +track_improvement() ImprovementResult
+        +generate_warning() Warning
+        +notify_stakeholders() NotificationResult
+        +get_sanction_history() List~SanctionHistory~
+        +predict_future_behavior() PredictionResult
     }
 
     class Incident {
@@ -24,14 +29,18 @@ classDiagram
         +severity: SeverityLevel
         +date: DateTime
         +description: String
-        +evidence: List[String]
+        +evidence: List~Evidence~
         +automatic: Boolean
         +staff_notes: String
-        +record_incident()
-        +evaluate_severity()
-        +link_to_ritual()
-        +generate_report()
-        +escalate_if_needed()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +record_incident() Boolean
+        +evaluate_severity() SeverityLevel
+        +link_to_ritual() Boolean
+        +generate_report() Report
+        +escalate_if_needed() EscalationResult
+        +add_evidence(evidence: Evidence) Boolean
+        +get_incident_timeline() Timeline
     }
 
     class ViolationType {
@@ -44,6 +53,7 @@ classDiagram
         QUALITY_BELOW_STANDARD
         RESPONSIBILITY_AVOIDANCE
         PATTERN_OF_BEHAVIOR
+        COLLABORATION_ISSUE
     }
 
     class SeverityLevel {
@@ -52,6 +62,7 @@ classDiagram
         MODERATE
         MAJOR
         CRITICAL
+        TERMINAL
     }
 
     class AutomaticSanction {
@@ -63,11 +74,14 @@ classDiagram
         +end_date: DateTime
         +status: SanctionStatus
         +applied_by: String
-        +apply_sanction()
-        +validate_duration()
-        +check_conditions()
-        +notify_application()
-        +record_effectiveness()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +apply_sanction() SanctionResult
+        +validate_duration() ValidationResult
+        +check_conditions() Boolean
+        +notify_application() NotificationResult
+        +record_effectiveness() EffectivenessScore
+        +get_sanction_impact() ImpactReport
     }
 
     class SanctionType {
@@ -80,6 +94,7 @@ classDiagram
         EXTRA_PREPARATION_TIME
         STAFF_MEETING_REQUIRED
         PARTICIPATION_FREEZE
+        PERFORMANCE_REVIEW
     }
 
     class RedemptionSystem {
@@ -87,15 +102,18 @@ classDiagram
         +user_id: UUID
         +current_points: Integer
         +required_points: Integer
-        +improvement_metrics: List[Metric]
-        +active_challenges: List[Challenge]
+        +improvement_metrics: List~Metric~
+        +active_challenges: List~Challenge~
         +redemption_path: String
-        +calculate_points()
-        +track_progress()
-        +verify_improvement()
-        +suggest_actions()
-        +generate_improvement_plan()
-        +award_redemption_points()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +calculate_points() Integer
+        +track_progress() ProgressReport
+        +verify_improvement() Boolean
+        +suggest_actions() List~Action~
+        +generate_improvement_plan() Plan
+        +award_redemption_points() PointsResult
+        +get_redemption_history() History
     }
 
     class ImprovementMetric {
@@ -107,17 +125,20 @@ classDiagram
         +target_value: Float
         +measurement_period: Integer
         +improvement_rate: Float
-        +track_progress()
-        +calculate_improvement()
-        +predict_achievement()
-        +generate_report()
-        +adjust_targets()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +track_progress() ProgressResult
+        +calculate_improvement() Float
+        +predict_achievement() Prediction
+        +generate_report() Report
+        +adjust_targets() Boolean
+        +get_milestone_progress() List~Milestone~
     }
 
-    SanctionEngine "1" -- "*" Incident
-    SanctionEngine "1" -- "*" AutomaticSanction
-    SanctionEngine "1" -- "1" RedemptionSystem
-    Incident "1" -- "1" ViolationType
-    Incident "1" -- "1" SeverityLevel
-    AutomaticSanction "1" -- "1" SanctionType
-    RedemptionSystem "1" -- "*" ImprovementMetric
+    SanctionEngine "1" -- "*" Incident : manages
+    SanctionEngine "1" -- "*" AutomaticSanction : triggers
+    SanctionEngine "1" -- "1" RedemptionSystem : enables
+    Incident "1" -- "1" ViolationType : categorizes
+    Incident "1" -- "1" SeverityLevel : rates
+    AutomaticSanction "1" -- "1" SanctionType : applies
+    RedemptionSystem "1" -- "*" ImprovementMetric : tracks

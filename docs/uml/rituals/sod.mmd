@@ -1,4 +1,5 @@
 classDiagram
+    %% SOD Management System
     class SOD {
         +id: UUID
         +date: DateTime
@@ -13,14 +14,18 @@ classDiagram
         +feedback_score: Float
         +staff_approval_status: ApprovalStatus
         +rehearsal_completed: Boolean
-        +create()
-        +update()
-        +submit_presentation()
-        +validate_submission()
-        +record_rehearsal()
-        +generate_presentation_report()
-        +calculate_final_score()
-        +trigger_escalation()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +create() Boolean
+        +update() Boolean
+        +submit_presentation() SubmissionResult
+        +validate_submission() ValidationResult
+        +record_rehearsal() Boolean
+        +generate_presentation_report() Report
+        +calculate_final_score() Float
+        +trigger_escalation() EscalationResult
+        +request_extension() Boolean
+        +schedule_rehearsal() Boolean
     }
 
     class SODStatus {
@@ -33,6 +38,8 @@ classDiagram
         COMPLETED
         MISSED
         POSTPONED
+        REHEARSAL_SCHEDULED
+        IN_REVISION
     }
 
     class ApprovalStatus {
@@ -42,6 +49,7 @@ classDiagram
         NEEDS_REVISION
         REJECTED
         LATE_SUBMISSION
+        CONDITIONALLY_APPROVED
     }
 
     class SODNotificationSchedule {
@@ -54,11 +62,15 @@ classDiagram
         +d_minus_3_sent: Boolean
         +d_minus_1_sent: Boolean
         +warning_sent: Boolean
-        +schedule_notifications()
-        +check_submission_status()
-        +send_reminder()
-        +send_warning()
-        +notify_staff()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +schedule_notifications() Boolean
+        +check_submission_status() SubmissionStatus
+        +send_reminder() NotificationResult
+        +send_warning() NotificationResult
+        +notify_staff() Boolean
+        +get_notification_history() List~Notification~
+        +reschedule_notifications() Boolean
     }
 
     class SODFeedback {
@@ -73,9 +85,13 @@ classDiagram
         +overall_score: Float
         +improvement_suggestions: String
         +staff_comments: String
-        +submit_feedback()
-        +calculate_scores()
-        +generate_feedback_report()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +submit_feedback() Boolean
+        +calculate_scores() FeedbackScore
+        +generate_feedback_report() Report
+        +compare_with_previous() ComparisonResult
+        +get_improvement_areas() List~ImprovementArea~
     }
 
     class SODMetrics {
@@ -86,14 +102,32 @@ classDiagram
         +presentation_quality: Float
         +audience_engagement: Float
         +improvement_trend: Float
-        +calculate_metrics()
-        +analyze_performance()
-        +generate_improvement_suggestions()
-        +track_progress()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +calculate_metrics() MetricsResult
+        +analyze_performance() PerformanceAnalysis
+        +generate_improvement_suggestions() List~Suggestion~
+        +track_progress() ProgressReport
+        +predict_future_performance() PredictionResult
     }
 
-    SOD "1" -- "1" SODStatus
-    SOD "1" -- "1" ApprovalStatus
-    SOD "1" -- "1" SODNotificationSchedule
-    SOD "1" -- "*" SODFeedback
-    SOD "1" -- "1" SODMetrics
+    class SODResource {
+        +id: UUID
+        +sod_id: UUID
+        +resource_type: ResourceType
+        +file_path: String
+        +version: Integer
+        +upload_time: DateTime
+        +status: ResourceStatus
+        +upload() Boolean
+        +validate() ValidationResult
+        +archive() Boolean
+        +get_version_history() List~Version~
+    }
+
+    SOD "1" -- "1" SODStatus : has status
+    SOD "1" -- "1" ApprovalStatus : requires approval
+    SOD "1" -- "1" SODNotificationSchedule : manages notifications
+    SOD "1" -- "*" SODFeedback : receives feedback
+    SOD "1" -- "1" SODMetrics : tracks performance
+    SOD "1" -- "*" SODResource : contains

@@ -1,4 +1,5 @@
 classDiagram
+    %% Core User Management
     class User {
         +id: UUID
         +email: String
@@ -14,16 +15,22 @@ classDiagram
         +warning_count: Integer
         +sanction_level: SanctionLevel
         +notification_preferences: NotificationPreferences
-        +create()
-        +update()
-        +delete()
-        +get_metrics()
-        +update_score()
-        +get_participation_history()
-        +get_upcoming_events()
-        +validate_credentials()
-        +update_warning_count()
-        +escalate_sanction_level()
+        +last_login: DateTime
+        +created_at: DateTime
+        +updated_at: DateTime
+        +create() Boolean
+        +update() Boolean
+        +delete() Boolean
+        +get_metrics() UserMetrics
+        +update_score() Float
+        +get_participation_history() List~Participation~
+        +get_upcoming_events() List~Event~
+        +validate_credentials() Boolean
+        +update_warning_count() Integer
+        +escalate_sanction_level() SanctionLevel
+        +reset_password() Boolean
+        +update_slack_info() Boolean
+        +get_sanction_history() List~Sanction~
     }
 
     class Role {
@@ -34,4 +41,40 @@ classDiagram
         SWE
     }
 
-    User "1" -- "1" Role
+    class Cohort {
+        +id: UUID
+        +name: String
+        +start_date: DateTime
+        +end_date: DateTime
+        +active: Boolean
+        +created_at: DateTime
+        +updated_at: DateTime
+        +create() Boolean
+        +update() Boolean
+        +get_members() List~User~
+        +get_active_rituals() List~Ritual~
+        +get_performance_metrics() CohortMetrics
+        +add_member(user_id: UUID) Boolean
+        +remove_member(user_id: UUID) Boolean
+    }
+
+    class NotificationPreferences {
+        +id: UUID
+        +user_id: UUID
+        +channels: List~Channel~
+        +quiet_hours_start: Time
+        +quiet_hours_end: Time
+        +timezone: String
+        +urgent_override: Boolean
+        +created_at: DateTime
+        +updated_at: DateTime
+        +get_preferences() Dict~String~
+        +update_preferences() Boolean
+        +is_notification_allowed() Boolean
+        +test_notification() Boolean
+        +get_notification_history() List~Notification~
+    }
+
+    User "1" -- "1" Role : has access level
+    User "*" -- "1" Cohort : belongs to
+    User "1" -- "1" NotificationPreferences : configures

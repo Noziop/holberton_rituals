@@ -1,4 +1,5 @@
 classDiagram
+    %% Global Analytics System
     class GlobalMetrics {
         +id: UUID
         +cohort_id: UUID
@@ -9,13 +10,16 @@ classDiagram
         +pld_engagement: Float
         +overall_participation: Float
         +warning_rate: Float
-        +improvement_trends: List[Trend]
-        +calculate_global_metrics()
-        +generate_trend_report()
-        +identify_risk_factors()
-        +suggest_improvements()
-        +export_analytics()
-        +predict_trends()
+        +improvement_trends: List~Trend~
+        +created_at: DateTime
+        +updated_at: DateTime
+        +calculate_global_metrics() Dict~Metric~
+        +generate_trend_report() Report
+        +identify_risk_factors() List~RiskFactor~
+        +suggest_improvements() List~Improvement~
+        +export_analytics() Report
+        +predict_trends() List~Prediction~
+        +compare_with_previous_period() Report
     }
 
     class WeightCalculator {
@@ -28,12 +32,14 @@ classDiagram
         +warning_modifier: Float
         +last_participation_date: DateTime
         +consecutive_misses: Integer
-        +calculate_current_weight()
-        +apply_warning_penalty()
-        +apply_performance_bonus()
-        +reset_modifiers()
-        +get_weight_history()
-        +predict_next_weight()
+        +history: List~WeightHistory~
+        +calculate_current_weight() Float
+        +apply_warning_penalty() Float
+        +apply_performance_bonus() Float
+        +reset_modifiers() Boolean
+        +get_weight_history() List~WeightHistory~
+        +predict_next_weight() Float
+        +get_weight_factors() Dict~Factor~
     }
 
     class MetricSnapshot {
@@ -41,10 +47,13 @@ classDiagram
         +metric_type: MetricType
         +value: Float
         +timestamp: DateTime
-        +context: Dict
-        +capture_snapshot()
-        +compare_with_previous()
-        +analyze_trend()
+        +context: Dict~MetricContext~
+        +previous_value: Float
+        +change_percentage: Float
+        +capture_snapshot() Boolean
+        +compare_with_previous() ComparisonResult
+        +analyze_trend() TrendAnalysis
+        +export_to_csv() String
     }
 
     class PerformanceIndicator {
@@ -54,23 +63,29 @@ classDiagram
         +target_value: Float
         +threshold_warning: Float
         +threshold_critical: Float
-        +evaluate_status()
-        +calculate_gap()
-        +suggest_actions()
+        +trend_direction: TrendDirection
+        +last_updated: DateTime
+        +evaluate_status() IndicatorStatus
+        +calculate_gap() Float
+        +suggest_actions() List~Action~
+        +get_historical_values() List~HistoricalValue~
     }
 
     class CohortAnalytics {
         +id: UUID
         +cohort_id: UUID
         +time_period: TimePeriod
-        +ritual_stats: Dict
-        +participation_trends: List[Trend]
-        +engagement_levels: Dict
-        +warning_patterns: List[Pattern]
-        +analyze_cohort_performance()
-        +identify_patterns()
-        +generate_recommendations()
-        +export_report()
+        +ritual_stats: Dict~RitualStat~
+        +participation_trends: List~Trend~
+        +engagement_levels: Dict~Engagement~
+        +warning_patterns: List~Pattern~
+        +created_at: DateTime
+        +updated_at: DateTime
+        +analyze_cohort_performance() PerformanceReport
+        +identify_patterns() List~Pattern~
+        +generate_recommendations() List~Recommendation~
+        +export_report() Report
+        +compare_with_other_cohorts() ComparisonReport
     }
 
     class MetricType {
@@ -80,6 +95,8 @@ classDiagram
         ENGAGEMENT
         WARNING
         IMPROVEMENT
+        RETENTION
+        SATISFACTION
     }
 
     class IndicatorType {
@@ -89,20 +106,23 @@ classDiagram
         TIMELINESS
         ENGAGEMENT
         LEADERSHIP
+        COLLABORATION
+        IMPROVEMENT_RATE
     }
 
     class TimePeriod {
         <<enumeration>>
         DAILY
         WEEKLY
+        BIWEEKLY
         MONTHLY
         QUARTERLY
         YEARLY
     }
 
-    GlobalMetrics "1" -- "*" MetricSnapshot
-    GlobalMetrics "1" -- "*" PerformanceIndicator
-    GlobalMetrics "1" -- "1" CohortAnalytics
-    MetricSnapshot "1" -- "1" MetricType
-    PerformanceIndicator "1" -- "1" IndicatorType
-    CohortAnalytics "1" -- "1" TimePeriod
+    GlobalMetrics "1" -- "*" MetricSnapshot : captures
+    GlobalMetrics "1" -- "*" PerformanceIndicator : monitors
+    GlobalMetrics "1" -- "1" CohortAnalytics : analyzes
+    MetricSnapshot "1" -- "1" MetricType : categorizes
+    PerformanceIndicator "1" -- "1" IndicatorType : measures
+    CohortAnalytics "1" -- "1" TimePeriod : spans

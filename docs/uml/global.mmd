@@ -1,11 +1,27 @@
 graph TD
-    U[User] --> N[Notifications]
+    %% Core Systems
+    U[User System] --> N[Notifications]
     U --> P[Participation]
     U --> S[Sanctions]
+
+    %% Rituals
     P --> R1[StandUp]
     P --> R2[SOD]
     P --> R3[PLD]
+
+    %% Metrics Flow
     R1 --> M[Metrics]
     R2 --> M
     R3 --> M
     S --> M
+
+    %% Style
+    classDef core fill:#f9f,stroke:#333,stroke-width:2px
+    classDef ritual fill:#bbf,stroke:#333,stroke-width:2px
+    classDef metrics fill:#bfb,stroke:#333,stroke-width:2px
+    classDef sanction fill:#fbb,stroke:#333,stroke-width:2px
+
+    class U,N,P core
+    class R1,R2,R3 ritual
+    class M metrics
+    class S sanction

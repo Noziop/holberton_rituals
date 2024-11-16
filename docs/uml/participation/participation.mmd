@@ -1,4 +1,5 @@
 classDiagram
+    %% Participation Management System
     class RitualParticipation {
         +id: UUID
         +user_id: UUID
@@ -11,11 +12,15 @@ classDiagram
         +performance_score: Float
         +feedback_given: Boolean
         +warnings_issued: Integer
-        +record_participation()
-        +update_weight()
-        +issue_warning()
-        +calculate_performance()
-        +require_feedback()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +record_participation() Boolean
+        +update_weight() Float
+        +issue_warning() Warning
+        +calculate_performance() Float
+        +require_feedback() Boolean
+        +get_participation_history() List~ParticipationHistory~
+        +validate_participation() Boolean
     }
 
     class RitualType {
@@ -56,10 +61,14 @@ classDiagram
         +performance_average: Float
         +leadership_count: Integer
         +warning_count: Integer
-        +calculate_metrics()
-        +analyze_trends()
-        +generate_report()
-        +predict_next_role()
+        +improvement_trend: Float
+        +created_at: DateTime
+        +updated_at: DateTime
+        +calculate_metrics() Dict~Metric~
+        +analyze_trends() List~Trend~
+        +generate_report() Report
+        +predict_next_role() ParticipationRole
+        +get_historical_metrics() List~HistoricalMetric~
     }
 
     class AttendanceRecord {
@@ -71,10 +80,14 @@ classDiagram
         +late_minutes: Integer
         +excuse_provided: String
         +excuse_validated: Boolean
-        +record_check_in()
-        +record_check_out()
-        +validate_excuse()
-        +calculate_duration()
+        +validator_id: UUID
+        +created_at: DateTime
+        +updated_at: DateTime
+        +record_check_in() Boolean
+        +record_check_out() Boolean
+        +validate_excuse() Boolean
+        +calculate_duration() Integer
+        +get_attendance_summary() AttendanceSummary
     }
 
     class ParticipationWeight {
@@ -87,15 +100,19 @@ classDiagram
         +warning_modifier: Float
         +final_weight: Float
         +last_calculated: DateTime
-        +calculate_weight()
-        +apply_modifiers()
-        +reset_modifiers()
-        +get_weight_history()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +calculate_weight() Float
+        +apply_modifiers() Boolean
+        +reset_modifiers() Boolean
+        +get_weight_history() List~WeightHistory~
+        +predict_next_weight() Float
+        +analyze_weight_factors() Dict~Factor~
     }
 
-    RitualParticipation "1" -- "1" RitualType
-    RitualParticipation "1" -- "1" ParticipationRole
-    RitualParticipation "1" -- "1" ParticipationStatus
-    RitualParticipation "1" -- "1" AttendanceRecord
-    RitualParticipation "1" -- "1" ParticipationWeight
-    ParticipationMetrics "1" -- "1" RitualType
+    RitualParticipation "1" -- "1" RitualType : has type
+    RitualParticipation "1" -- "1" ParticipationRole : assigned
+    RitualParticipation "1" -- "1" ParticipationStatus : current status
+    RitualParticipation "1" -- "1" AttendanceRecord : tracks
+    RitualParticipation "1" -- "1" ParticipationWeight : calculates
+    ParticipationMetrics "1" -- "1" RitualType : measures

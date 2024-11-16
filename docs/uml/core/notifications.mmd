@@ -1,24 +1,30 @@
 classDiagram
+    %% Notification Management System
     class NotificationPreferences {
         +id: UUID
         +user_id: UUID
         +email_enabled: Boolean
         +slack_enabled: Boolean
-        +sms_enabled: Boolean
+        +in_app_enabled: Boolean
         +quiet_hours_start: Time
         +quiet_hours_end: Time
         +minimum_notice_period: Integer
         +preferred_channel: Channel
-        +update_preferences()
-        +is_notification_allowed()
-        +get_active_channels()
+        +timezone: String
+        +urgent_override: Boolean
+        +created_at: DateTime
+        +updated_at: DateTime
+        +update_preferences() Boolean
+        +is_notification_allowed() Boolean
+        +get_active_channels() List~Channel~
+        +test_channel(channel: Channel) Boolean
+        +get_delivery_stats() NotificationStats
     }
 
     class Channel {
         <<enumeration>>
         EMAIL
         SLACK
-        SMS
         IN_APP
     }
 
@@ -30,21 +36,56 @@ classDiagram
         +scheduled_time: DateTime
         +sent: Boolean
         +status: NotificationStatus
-        +schedule()
-        +send()
-        +check_quiet_hours()
-        +retry_failed()
+        +priority: NotificationPriority
+        +retry_count: Integer
+        +last_retry: DateTime
+        +created_at: DateTime
+        +updated_at: DateTime
+        +schedule() Boolean
+        +send() Boolean
+        +check_quiet_hours() Boolean
+        +retry_failed() Boolean
+        +cancel() Boolean
+        +reschedule(new_time: DateTime) Boolean
+        +get_delivery_status() NotificationStatus
     }
 
     class NotificationStatus {
         <<enumeration>>
         PENDING
+        SCHEDULED
+        SENDING
         SENT
         FAILED
         READ
         ACKNOWLEDGED
+        CANCELLED
     }
 
-    NotificationPreferences "1" -- "1..*" Channel
-    NotificationPreferences "1" -- "*" NotificationSchedule
-    NotificationSchedule "1" -- "1" NotificationStatus
+    class NotificationPriority {
+        <<enumeration>>
+        LOW
+        NORMAL
+        HIGH
+        URGENT
+    }
+
+    class NotificationTemplate {
+        +id: UUID
+        +ritual_type: RitualType
+        +template_type: TemplateType
+        +content: String
+        +variables: List~String~
+        +created_at: DateTime
+        +updated_at: DateTime
+        +create() Boolean
+        +update() Boolean
+        +render(data: Dict) String
+        +validate() Boolean
+    }
+
+    NotificationPreferences "1" -- "1..*" Channel : supports
+    NotificationPreferences "1" -- "*" NotificationSchedule : manages
+    NotificationSchedule "1" -- "1" NotificationStatus : has status
+    NotificationSchedule "1" -- "1" NotificationPriority : has priority
+    NotificationSchedule "*" -- "1" NotificationTemplate : uses

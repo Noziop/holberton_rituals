@@ -1,22 +1,27 @@
 classDiagram
+    %% PLD Management System
     class PLD {
         +id: UUID
         +date: DateTime
         +cohort_id: UUID
         +swe_id: UUID
         +topic: String
-        +learning_objectives: List[String]
-        +required_prerequisites: List[String]
+        +learning_objectives: List~Objective~
+        +required_prerequisites: List~Prerequisite~
         +materials_path: String
         +max_group_size: Integer
         +min_participation_rate: Float
         +status: PLDStatus
-        +create()
-        +update()
-        +validate_prerequisites()
-        +form_groups()
-        +track_attendance()
-        +generate_effectiveness_report()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +create() Boolean
+        +update() Boolean
+        +validate_prerequisites() ValidationResult
+        +form_groups() List~PLDGroup~
+        +track_attendance() AttendanceReport
+        +generate_effectiveness_report() Report
+        +reschedule(new_date: DateTime) Boolean
+        +notify_participants() Boolean
     }
 
     class PLDStatus {
@@ -28,21 +33,26 @@ classDiagram
         COMPLETED
         CANCELLED
         RESCHEDULED
+        NEEDS_REVIEW
     }
 
     class PLDGroup {
         +id: UUID
         +pld_id: UUID
-        +members: List[UUID]
+        +members: List~UUID~
         +leader_id: UUID
         +progress_status: ProgressStatus
         +completion_rate: Float
         +collaboration_score: Float
-        +create_group()
-        +add_member()
-        +remove_member()
-        +update_progress()
-        +submit_group_feedback()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +create_group() Boolean
+        +add_member(user_id: UUID) Boolean
+        +remove_member(user_id: UUID) Boolean
+        +update_progress() Float
+        +submit_group_feedback() Boolean
+        +request_help() HelpRequest
+        +get_group_metrics() GroupMetrics
     }
 
     class ProgressStatus {
@@ -52,6 +62,8 @@ classDiagram
         STUCK
         COMPLETED
         NEEDS_HELP
+        BLOCKED
+        REVIEWING
     }
 
     class SWEInstructions {
@@ -59,14 +71,18 @@ classDiagram
         +pld_id: UUID
         +swe_id: UUID
         +instructions: String
-        +resources: List[String]
+        +resources: List~Resource~
         +difficulty_level: DifficultyLevel
         +estimated_duration: Integer
-        +submission_requirements: List[String]
-        +create()
-        +update()
-        +validate()
-        +publish()
+        +submission_requirements: List~Requirement~
+        +created_at: DateTime
+        +updated_at: DateTime
+        +create() Boolean
+        +update() Boolean
+        +validate() ValidationResult
+        +publish() Boolean
+        +get_resource_links() List~ResourceLink~
+        +check_prerequisites() Boolean
     }
 
     class DifficultyLevel {
@@ -75,6 +91,7 @@ classDiagram
         INTERMEDIATE
         ADVANCED
         EXPERT
+        CHALLENGE
     }
 
     class PLDMetrics {
@@ -85,10 +102,13 @@ classDiagram
         +objective_completion: Float
         +student_satisfaction: Float
         +difficulty_rating: Float
-        +calculate_effectiveness()
-        +analyze_group_dynamics()
-        +track_learning_progress()
-        +generate_recommendations()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +calculate_effectiveness() EffectivenessScore
+        +analyze_group_dynamics() DynamicsReport
+        +track_learning_progress() ProgressReport
+        +generate_recommendations() List~Recommendation~
+        +compare_with_previous() ComparisonReport
     }
 
     class PLDFeedback {
@@ -102,15 +122,18 @@ classDiagram
         +group_collaboration: Integer
         +learning_value: Integer
         +comments: String
-        +submit_feedback()
-        +analyze_feedback()
-        +suggest_improvements()
+        +created_at: DateTime
+        +updated_at: DateTime
+        +submit_feedback() Boolean
+        +analyze_feedback() FeedbackAnalysis
+        +suggest_improvements() List~Improvement~
+        +get_sentiment_analysis() SentimentScore
     }
 
-    PLD "1" -- "1" PLDStatus
-    PLD "1" -- "*" PLDGroup
-    PLD "1" -- "1" SWEInstructions
-    PLD "1" -- "1" PLDMetrics
-    PLD "1" -- "*" PLDFeedback
-    PLDGroup "1" -- "1" ProgressStatus
-    SWEInstructions "1" -- "1" DifficultyLevel
+    PLD "1" -- "1" PLDStatus : has status
+    PLD "1" -- "*" PLDGroup : contains
+    PLD "1" -- "1" SWEInstructions : guided by
+    PLD "1" -- "1" PLDMetrics : measured by
+    PLD "1" -- "*" PLDFeedback : receives
+    PLDGroup "1" -- "1" ProgressStatus : tracks
+    SWEInstructions "1" -- "1" DifficultyLevel : rated as
