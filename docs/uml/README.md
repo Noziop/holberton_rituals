@@ -1,118 +1,105 @@
-# Holberton Rituals - UML Documentation
+# Documentation UML - Holberton Rituals 📊
 
-## Overview
-This documentation presents the complete UML structure of the Holberton Rituals application, a comprehensive system designed to manage and optimize educational rituals.
+Architecture technique détaillée du système de gestion des rituels Holberton School.
 
-## Structure
-```mermaid
-graph TD
-    Core --> Rituals
-    Core --> Participation
-    Core --> Sanctions
-    Rituals --> Metrics
-    Participation --> Metrics
-    Sanctions --> Metrics
+## 📁 Structure des Diagrammes
+
+```
+uml/
+├── class/             # Diagrammes de classes
+│   ├── core/          # Système central
+│   └── rituals/       # Gestion rituels
+├── database/          # Structure BDD
+│   ├── tables/        # Définitions tables
+│   ├── schema.mmd     # Vue globale
+│   ├── indexes.mmd    # Optimisations
+│   └── relations.mmd  # Relations
+├── usecase/           # Cas d'utilisation
+│   ├── staff/         # Actions staff
+│   └── student/       # Actions étudiants
+└── workflows/         # Flux des processus
+    ├── rituals/       # SOD, StandUp, PLD
+    ├── volunteer/     # Système volontariat
+    ├── gamification/  # Points et badges
+    └── notifications/ # Système notifs
 ```
 
-## Components
+## 🎯 Rituels Principaux
 
-### Core System
-- [User Management](core/user.mmd)
-  - User authentication and authorization
-  - Role management
-  - Basic user information
-- [Notification System](core/notifications.mmd)
-  - Multi-channel notifications
-  - Scheduling and preferences
-  - Delivery tracking
+### SOD (Share or Die)
+- **Timing**
+  - Fondamentaux : Lundi/Mardi/Jeudi
+  - Spécialisation : Vendredi
+- **Règles**
+  - Pas de présentation récente (-15 jours)
+  - Vérifications multiples :
+    - Disponibilité étudiant
+    - Vacances cohorte
+    - Exclusions staff
+- **Pondération**
+  - Temps depuis dernière présentation
+  - Historique participation
+  - Assiduité
 
-### Ritual Management
-- [Stand-up](rituals/standup.mmd)
-  - Daily meeting management
-  - Scrum master rotation
-  - Issue tracking
-- [SOD](rituals/sod.mmd)
-  - Presentation scheduling
-  - Submission management
-  - Feedback system
-- [PLD](rituals/pld.mmd)
-  - Group formation
-  - SWE instructions
-  - Progress tracking
 
-### Participation System
-- [Participation Tracking](participation/participation.mmd)
-  - Attendance management
-  - Role assignment
-  - Performance metrics
+### StandUp (Mar-Ven, 11:45)
+- Sélection Scrum Master
+- Critères :
+  - Pas SM semaine précédente
+  - Expertise projet en cours
+  - Présence confirmée
+- Support préparation
 
-### Sanction Management
-- [Sanctions](sanctions/sanctions.mmd)
-  - Automated warning system
-  - Progressive sanctions
-  - Redemption tracking
+### PLD (Jeudi)
+- Groupes équilibrés
+- Distribution expertise :
+  - Un expert par groupe
+  - Mix de niveaux
+  - Historique collaboration
+- Support apprentissage
 
-### Metrics & Analytics
-- [Metrics](metrics/metrics.mmd)
-  - Global performance indicators
-  - Trend analysis
-  - Predictive metrics
+## 🛠 Implémentation Technique
 
-## Relationships and Dependencies
+### Base de Données
+- Tables principales
+- Index optimisés
+- Relations cohérentes
+- Contraintes d'intégrité
 
-### Core Dependencies
-```mermaid
-graph LR
-    User --> Notifications
-    User --> RitualParticipation
-    User --> SanctionEngine
-```
+### Classes
+- Patterns de conception
+- Séparation des responsabilités
+- Interfaces claires
+- Gestion des exceptions
 
-### Ritual Dependencies
-```mermaid
-graph LR
-    RitualParticipation --> StandUp
-    RitualParticipation --> SOD
-    RitualParticipation --> PLD
-    StandUp --> Metrics
-    SOD --> Metrics
-    PLD --> Metrics
-```
+### Workflows
+- Processus détaillés
+- Gestion des erreurs
+- Notifications intégrées
+- Suivi des actions
 
-## Conventions
+## 🎮 Gamification Intégrée
 
-### Naming Conventions
-- Classes: PascalCase (e.g., `UserManager`)
-- Enums: PascalCase (e.g., `RitualType`)
-- Properties: camelCase (e.g., `firstName`)
-- Methods: camelCase (e.g., `calculateScore`)
+- Points par participation
+- Badges de progression
+- Niveaux d'expertise
+- Récompenses volontariat
 
-### Relationship Types
-- One-to-One: `1 -- 1`
-- One-to-Many: `1 -- *`
-- Many-to-Many: `* -- *`
+## 📱 Système de Notifications
 
-## Maintenance
+- Multi-canal (Slack/Email)
+- Préférences utilisateur
+- Rappels intelligents
+- Escalade urgences
 
-### Update Procedures
-1. Create a new branch for UML updates
-2. Update relevant diagram(s)
-3. Update this README if necessary
-4. Update global.mmd if relationships change
-5. Create PR for review
+## ⚠️ Propriété Intellectuelle
 
-### Validation Checklist
-- [ ] All classes properly named
-- [ ] All relationships properly defined
-- [ ] Enums complete and accurate
-- [ ] Methods properly specified
-- [ ] README updated
-- [ ] Global diagram consistent
+© 2024 Fassih Belmokhtar. Tous droits réservés.
+Ce projet est propriétaire.
 
-## Contributing
-Please refer to our [UML Style Guide](../docs/style-guide.md) before making changes to any diagrams.
+## ✨ Notes Techniques
 
-## Tools Used
-- Mermaid for UML diagrams
-- VS Code with Mermaid extension
-- Git for version control
+- Diagrammes réalisés avec Mermaid.js
+- Conventions de nommage strictes
+- Documentation inline
+- Tests intégrés
